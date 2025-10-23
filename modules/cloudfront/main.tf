@@ -24,7 +24,8 @@ resource "aws_cloudfront_distribution" "my_distribution" {
     target_origin_id       = var.alb_domain_name
     viewer_protocol_policy = "redirect-to-https"
     forwarded_values {
-      headers      = []
+      # headers      = []
+      headers      = ["host"]
       query_string = true
       cookies {
         forward = "all"
@@ -33,8 +34,10 @@ resource "aws_cloudfront_distribution" "my_distribution" {
   }
   restrictions {
     geo_restriction {
-      restriction_type = "whitelist"
-      locations        = ["IN", "US", "CA"]
+      # restriction_type = "whitelist"
+      # locations        = ["IN", "US", "CA"]
+      restriction_type = "none"
+
     }
   }
   tags = {
@@ -46,3 +49,46 @@ resource "aws_cloudfront_distribution" "my_distribution" {
     minimum_protocol_version = "TLSv1.2_2018"
   }
 }
+
+# resource "aws_cloudfront_distribution" "my_distribution" {
+#   enabled = true
+
+
+#   origin {
+#     domain_name = var.alb_domain_name
+#     origin_id   = var.alb_domain_name
+
+#     custom_origin_config {
+#       http_port              = 80
+#       https_port              = 443
+#       origin_protocol_policy = "http-only"
+#       origin_ssl_protocols = ["TLSv1.2"]
+#     }
+#   }
+#   restrictions {
+#     geo_restriction {
+#       restriction_type = "none"
+#     }
+#   }
+
+#   viewer_certificate {
+#       cloudfront_default_certificate = true
+#   }
+#   default_cache_behavior {
+#     allowed_methods        = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
+#     cached_methods         = ["GET", "HEAD", "OPTIONS"]
+#     target_origin_id       = var.alb_domain_name
+#     viewer_protocol_policy = "allow-all"
+#     forwarded_values {
+#       headers      = []
+#       query_string = true
+#       cookies {
+#         forward = "all"
+#       }
+#     }
+#   }
+
+#   tags = {
+#     Name = var.project_name
+#   }
+# }

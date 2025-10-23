@@ -74,6 +74,7 @@ resource "aws_route_table_association" "pub-sub-2-b_route_table_association" {
   route_table_id      = aws_route_table.public_route_table.id
 }
 
+# Web Layer
 # create private app subnet pri-sub-3a
 resource "aws_subnet" "pri_sub_3a" {
   vpc_id                   = aws_vpc.vpc.id
@@ -98,6 +99,7 @@ resource "aws_subnet" "pri_sub_4b" {
   }
 }
 
+# Internal Load balancer and App layer
 # create private data subnet pri-sub-5a
 resource "aws_subnet" "pri_sub_5a" {
   vpc_id                   = aws_vpc.vpc.id
@@ -121,3 +123,29 @@ resource "aws_subnet" "pri_sub_6b" {
     Name    = "pri-sub-6b"
   }
 }
+# Database Layer
+# create private data subnet pri-sub-5a
+resource "aws_subnet" "pri_sub_7a" {
+  vpc_id                   = aws_vpc.vpc.id
+  cidr_block               = var.pri_sub_7a_cidr
+  availability_zone        = data.aws_availability_zones.available_zones.names[0]
+  map_public_ip_on_launch  = false
+
+  tags      = {
+    Name    = "pri-sub-7a"
+  }
+}
+
+# create private data subnet pri-sub-6-b
+resource "aws_subnet" "pri_sub_8b" {
+  vpc_id                   = aws_vpc.vpc.id
+  cidr_block               = var.pri_sub_8b_cidr
+  availability_zone        = data.aws_availability_zones.available_zones.names[1]
+  map_public_ip_on_launch  = false
+
+  tags      = {
+    Name    = "pri-sub-8b"
+  }
+}
+
+

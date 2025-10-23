@@ -7,3 +7,5 @@ variable pri_sub_3a_cidr {}
 variable pri_sub_4b_cidr {}
 variable pri_sub_5a_cidr {}
 variable pri_sub_6b_cidr {}
+variable pri_sub_7a_cidr {}
+variable pri_sub_8b_cidr {}

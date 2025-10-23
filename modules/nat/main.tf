@@ -8,13 +8,13 @@ resource "aws_eip" "eip-nat-a" {
 }
 
 # allocate elastic ip. this eip will be used for the nat-gateway in the public subnet pub-sub-2-b
-resource "aws_eip" "eip-nat-b" {
-  vpc    = true
+# resource "aws_eip" "eip-nat-b" {
+#   vpc    = true
 
-  tags   = {
-    Name = "eip-nat-b"
-  }
-}
+#   tags   = {
+#     Name = "eip-nat-b"
+#   }
+# }
 
 # create nat gateway in public subnet pub-sub-1a
 resource "aws_nat_gateway" "nat-a" {
@@ -30,18 +30,18 @@ resource "aws_nat_gateway" "nat-a" {
 }
 
 # create nat gateway in public subnet pub-sub-1-a
-resource "aws_nat_gateway" "nat-b" {
-  allocation_id = aws_eip.eip-nat-b.id
-  subnet_id     = var.pub_sub_2b_id
+# resource "aws_nat_gateway" "nat-b" {
+#   allocation_id = aws_eip.eip-nat-b.id
+#   subnet_id     = var.pub_sub_2b_id
 
-  tags   = {
-    Name = "nat-b"
-  }
+#   tags   = {
+#     Name = "nat-b"
+#   }
 
-  # to ensure proper ordering, it is recommended to add an explicit dependency
-  # on the internet gateway for the vpc.
-  depends_on = [var.igw_id]
-}
+#   # to ensure proper ordering, it is recommended to add an explicit dependency
+#   # on the internet gateway for the vpc.
+#   depends_on = [var.igw_id]
+# }
 
 # create private route table Pri-RT-A and add route through NAT-GW-A
 resource "aws_route_table" "pri-rt-a" {
@@ -75,7 +75,9 @@ resource "aws_route_table" "pri-rt-b" {
 
   route {
     cidr_block      = "0.0.0.0/0"
-    nat_gateway_id  = aws_nat_gateway.nat-b.id
+    # only 1 nat gateways is used
+    # nat_gateway_id  = aws_nat_gateway.nat-b.id
+    nat_gateway_id  = aws_nat_gateway.nat-a.id
   }
 
   tags   = {

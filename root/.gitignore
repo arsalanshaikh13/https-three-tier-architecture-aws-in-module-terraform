@@ -17,3 +17,6 @@ terraform.*
 *.tfstate
 /**/*.tfstate*
 *.tfstate.*
+env.sh
+startup.sh
+*.log

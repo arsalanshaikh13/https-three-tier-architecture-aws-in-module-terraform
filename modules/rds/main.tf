@@ -1,20 +1,20 @@
 
 resource "aws_db_subnet_group" "db-subnet" {
   name       = var.db_sub_name
-  subnet_ids = [var.pri_sub_5a_id, var.pri_sub_6b_id] # Replace with your private subnet IDs
+  subnet_ids = [var.pri_sub_7a_id, var.pri_sub_8b_id] # Replace with your private subnet IDs
 }
 
-resource "aws_db_instance" "db" {
-  identifier              = "bookdb-instance"
+resource "aws_db_instance" "panda-database" {
+  identifier              = "panda-dev-db"
   engine                  = "mysql"
-  engine_version          = "5.7"
-  instance_class          = "db.t2.micro"
+  engine_version          = "8.0.42"
+  instance_class          = "db.t4g.micro"
   allocated_storage       = 20
   username                = var.db_username
   password                = var.db_password
-  db_name                 = var.db_name
+  # db_name                 = var.db_name
   multi_az                = true
-  storage_type            = "gp2"
+  storage_type            = "standard"
   storage_encrypted       = false
   publicly_accessible     = false
   skip_final_snapshot     = true
@@ -25,6 +25,6 @@ resource "aws_db_instance" "db" {
   db_subnet_group_name = aws_db_subnet_group.db-subnet.name
 
   tags = {
-    Name = "bookdb"
+    Name = "appdb"
   }
 }

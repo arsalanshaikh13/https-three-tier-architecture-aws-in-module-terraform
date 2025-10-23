@@ -11,9 +11,12 @@ output "cloudfront_arn" {
   value = aws_cloudfront_distribution.my_distribution.arn
 }
 
-
 output "cloudfront_status" {
   value = aws_cloudfront_distribution.my_distribution.status
+}
+
+output "cloudfront_aliases" {
+  value = aws_cloudfront_distribution.my_distribution.aliases
 }
 
 output "cloudfront_hosted_zone_id" {

@@ -1,24 +1,39 @@
 variable "project_name"{}
-variable "ami" {
-    default = "ami-053b0d53c279acc90"
-}
+# variable "ami" {
+#     default = "ami-053b0d53c279acc90"
+# }
 variable "cpu" {
-    default = "t2.micro"
+    default = "t4g.micro"
 }
-variable "key_name" {}
+# variable "key_name" {}
 variable "client_sg_id" {}
+variable "server_sg_id" {}
 variable "max_size" {
-    default = 6
+    default = 1
 }
 variable "min_size" {
-    default = 2
+    default = 1
 }
 variable "desired_cap" {
-    default = 3
+    default = 1
 }
 variable "asg_health_check_type" {
     default = "ELB"
 }
 variable "pri_sub_3a_id" {}
 variable "pri_sub_4b_id" {}
+variable "pri_sub_5a_id" {}
+variable "pri_sub_6b_id" {}
 variable "tg_arn" {}
+variable "internal_tg_arn" {}
+# variable s3_ssm_instance_profile_name {}
+variable s3_ssm_cw_instance_profile_name {}
+variable db_dns_address {}
+variable db_endpoint {}
+variable db_username {}
+variable db_password {}
+variable db_name {}
+variable db_secret_name {}
+variable internal_alb_dns_name {}
+variable bucket_name {}
+variable region {}
