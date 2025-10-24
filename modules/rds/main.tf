@@ -13,7 +13,7 @@ resource "aws_db_instance" "panda-database" {
   username                = var.db_username
   password                = var.db_password
   # db_name                 = var.db_name
-  multi_az                = true
+  multi_az                = false
   storage_type            = "standard"
   storage_encrypted       = false
   publicly_accessible     = false
