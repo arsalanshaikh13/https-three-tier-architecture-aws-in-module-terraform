@@ -20,3 +20,6 @@ terraform.*
 env.sh
 startup.sh
 *.log
+
+# packer files
+manifest*.json

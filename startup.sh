@@ -1,12 +1,21 @@
 #!/bin/bash
-set -xeo pipefail
+set -eo pipefail
 
 # setup terraform state bucket
 cd backend-tfstate-bootstrap
 DIRECTORY_BACKEND=".terraform"
 
-if [ -d "$DIRECTORY_BACKEND" ]; then
+if [ -d "$DIRECTORY_BACKEND" ] ; then
   echo "Directory '$DIRECTORY_BACKEND' exists."
+  if grep -q '"resources": \[\]' terraform.tfstate; then
+    echo "tfstate does not contains resources."
+    terraform init  -upgrade
+    terraform fmt
+    terraform validate
+    terraform apply -auto-approve -parallelism=20
+  fi
+  echo "tfstate does  contain resources."
+
 else
   echo "Directory '$DIRECTORY_BACKEND' does not exist."
   echo "Setting up Terraform state bucket and DyanmoDB Table"
@@ -14,10 +23,9 @@ else
   terraform init -reconfigure
   terraform fmt
   terraform validate
-#   terraform plan -out=plan1.out
-# terraform show -json plan1.out > plan1.json
   terraform apply -auto-approve -parallelism=20
 fi
+# exit 1
 
 cd ../root
 # cd root
@@ -81,10 +89,12 @@ source env.sh
 terraform init -reconfigure
 terraform fmt
 terraform validate
-terraform plan -out=graph/plan1.out
-terraform show -json graph/plan1.out > graph/plan1.json
+terraform plan -out=graph/plan2.out
+terraform show -json graph/plan2.out > graph/plan2.json
 terraform apply -auto-approve -parallelism=20
-terraform graph > graph/graph1.txt
+terraform graph > graph/graph2.txt
 
+
+# terraform destroy -target=module.nat_instance
 
 # ./startup.sh 2>&1 | tee >(sed 's/\x1b\[[0-9;]*m//g' > setup-logs/setupnew.log )

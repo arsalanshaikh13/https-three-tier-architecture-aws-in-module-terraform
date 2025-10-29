@@ -41,36 +41,49 @@
 
 
 
-
 # Fetch the latest ARM64 Amazon Linux 2023 AMI
-data "aws_ami" "latest_amazon_linux" {
-    most_recent = true
+# data "aws_ami" "latest_amazon_linux" {
+#     most_recent = true
 
-    filter {
-        name   = "name"
-        values = ["al2023-ami-2023.*-arm64"] # Using ARM for cost optimization
-    }
+#     filter {
+#         name   = "name"
+#         values = ["al2023-ami-2023.*-arm64"] # Using ARM for cost optimization
+#     }
 
-    filter {
-        name   = "virtualization-type"
-        values = ["hvm"]
-    }
+#     filter {
+#         name   = "virtualization-type"
+#         values = ["hvm"]
+#     }
 
-    owners = ["amazon"]
+#     owners = ["amazon"]
+# }
+
+data "local_file" "frontend_ami" {
+  filename = "${path.module}/ami_ids/frontend_ami.txt"
 }
 
+data "local_file" "backend_ami" {
+  filename = "${path.module}/ami_ids/backend_ami.txt"
+}
+locals {
+  frontend_ami_id = trimspace(data.local_file.frontend_ami.content)
+  backend_ami_id  = trimspace(data.local_file.backend_ami.content)
+}
 
 resource "aws_launch_template" "lt_name" {
   name          = "${var.project_name}-tpl"
-  image_id      = data.aws_ami.latest_amazon_linux.id
+  # image_id      = data.aws_ami.latest_amazon_linux.id
+  image_id      = local.frontend_ami_id
+  # image_id      = var.frontend_ami_id
   instance_type = var.cpu
   # key_name      = var.key_name
   # user_data     = filebase64("../modules/asg/client.sh")
 
-  user_data = base64encode(templatefile("${path.module}/client.sh", {
-    internal_alb_dns_name = var.internal_alb_dns_name
-    bucket_name = var.bucket_name
-  }))
+  # using packer
+  # user_data = base64encode(templatefile("${path.module}/client.sh", {
+  #   internal_alb_dns_name = var.internal_alb_dns_name
+  #   bucket_name = var.bucket_name
+  # }))
     # backend_alb_dns = var.internal_alb_dns_name
 
 
@@ -86,7 +99,7 @@ resource "aws_launch_template" "lt_name" {
   }
 
   lifecycle {
-    ignore_changes = [image_id]
+    # ignore_changes = [image_id]
     create_before_destroy = false
   }
   block_device_mappings {
@@ -113,7 +126,9 @@ resource "aws_launch_template" "lt_name" {
 
 resource "aws_launch_template" "server_lt_name" {
   name          = "${var.project_name}-server_tpl"
-  image_id      = data.aws_ami.latest_amazon_linux.id
+  # image_id      = data.aws_ami.latest_amazon_linux.id
+  image_id      = local.backend_ami_id
+  # image_id      = var.backend_ami_id
   instance_type = var.cpu
   # key_name      = var.key_name
   # user_data     = filebase64("../modules/asg/server.sh")
@@ -126,23 +141,23 @@ resource "aws_launch_template" "server_lt_name" {
     security_groups            = [var.server_sg_id]
   }
 
-
- user_data = base64encode(templatefile("${path.module}/server.sh", {
-    db_host     = var.db_dns_address
-    db_username = var.db_username
-    db_password = var.db_password
-    db_name     = var.db_name
-    db_secret_name     = var.db_secret_name
-    bucket_name = var.bucket_name
-    aws_region = var.region
-  }))
+  # using packer
+#  user_data = base64encode(templatefile("${path.module}/server.sh", {
+#     db_host     = var.db_dns_address
+#     db_username = var.db_username
+#     db_password = var.db_password
+#     db_name     = var.db_name
+#     db_secret_name     = var.db_secret_name
+#     bucket_name = var.bucket_name
+#     aws_region = var.region
+#   }))
   iam_instance_profile {
     # name = var.s3_ssm_instance_profile_name
     name = var.s3_ssm_cw_instance_profile_name
   }
 
   lifecycle {
-    ignore_changes = [image_id]
+    # ignore_changes = [image_id]
     create_before_destroy = false
   }
   block_device_mappings {
@@ -169,7 +184,6 @@ resource "aws_launch_template" "server_lt_name" {
 }
 
 resource "aws_autoscaling_group" "asg_name" {
-
   name                      = "${var.project_name}-asg"
   max_size                  = var.max_size
   min_size                  = var.min_size

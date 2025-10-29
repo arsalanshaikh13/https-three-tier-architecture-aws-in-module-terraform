@@ -21,9 +21,9 @@ resource "aws_s3_bucket" "tf_state" {
   #   acl    = "private"
   # https://dev.to/the_cozma/terraform-handling-the-deletion-of-a-non-empty-aws-s3-bucket-3jg3
   force_destroy = true
-#   lifecycle {
-#     prevent_destroy = true
-#   }
+  #   lifecycle {
+  #     prevent_destroy = true
+  #   }
 
   tags = {
     Name        = "Terraform State Bucket"

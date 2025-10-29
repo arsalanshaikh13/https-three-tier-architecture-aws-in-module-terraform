@@ -37,3 +37,5 @@ variable db_secret_name {}
 variable internal_alb_dns_name {}
 variable bucket_name {}
 variable region {}
+# variable frontend_ami_id {}
+# variable backend_ami_id {}

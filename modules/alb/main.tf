@@ -39,10 +39,11 @@ resource "aws_lb_target_group" "alb_target_group" {
 # create a listener on port 80 with redirect action
 resource "aws_lb_listener" "alb_http_listener" {
   load_balancer_arn = aws_lb.application_load_balancer.arn
-  # port              = 80
-  # protocol          = "HTTP"
-  port              = 443
-  protocol          = "HTTPS"
+  port              = 80
+  protocol          = "HTTP"
+  # https://www.stormit.cloud/blog/cloudfront-distribution-for-amazon-ec2-alb/
+  # port              = 443
+  # protocol          = "HTTPS"
 
   default_action {
     type = "forward"

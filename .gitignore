@@ -35,8 +35,10 @@ terraform.rc
 keys/
 
 # Packer files
-manifest.json
+manifest*.json
 packer.log
+build_ami_old.sh
+packer_cache/
 
 # Terraform lock file
 .terraform.lock.hcl
@@ -52,7 +54,7 @@ plan.*
 # Local .terraform directories
 **/.terraform/*
 .terraform/*
-*.hcl
+*lock.hcl
 *.lock*
 ../.terraform/*
 terraform.*

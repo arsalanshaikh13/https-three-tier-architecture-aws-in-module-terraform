@@ -24,9 +24,9 @@ module "vpc" {
 }
 
 module "iam_role" {
-  source = "../modules/iam_role"
-  vpc_id = module.vpc.vpc_id
-
+  source     = "../modules/iam_role"
+  vpc_id     = module.vpc.vpc_id
+  depends_on = [module.vpc]
 }
 
 
@@ -82,6 +82,18 @@ module "rds" {
   depends_on    = [module.vpc, module.security-group] # Wait for VPC before DB
 }
 
+module "aws_secret" {
+  source         = "../modules/aws_secret"
+  db_dns_address = module.rds.endpoint_address
+  db_username    = var.db_username
+  db_password    = var.db_password
+  db_name        = var.db_name
+  project_name   = module.vpc.project_name
+  depends_on     = [module.rds] # Wait for VPC before DB
+
+}
+
+
 # creating Key for instances
 # module "key" {
 #   source = "../modules/key"
@@ -102,16 +114,41 @@ module "alb" {
 
 }
 
-module "aws_secret" {
-  source         = "../modules/aws_secret"
-  db_dns_address = module.rds.endpoint_address
-  db_username    = var.db_username
-  db_password    = var.db_password
-  db_name        = var.db_name
-  project_name   = module.vpc.project_name
-  depends_on         = [module.rds] # Wait for VPC before DB
+resource "null_resource" "build_ami" {
+  depends_on = [module.vpc, module.nat_instance, module.security-group, module.aws_secret, module.iam_role, module.rds, module.alb]
 
+  provisioner "local-exec" {
+    environment = {
+      VPC_ID    = module.vpc.vpc_id
+      SUBNET_ID = module.vpc.pub_sub_1a_id
+      # Get RDS details from Terraform state
+      DB_HOST                         = module.rds.endpoint_address
+      DB_PORT                         = "3306"
+      DB_USER                         = var.db_username
+      DB_PASSWORD                     = var.db_password
+      DB_NAME                         = var.db_name
+      RDS_SG_ID                       = module.security-group.db_sg_id
+      s3_ssm_cw_instance_profile_name = module.iam_role.s3_ssm_cw_instance_profile_name
+      db_secret_name                  = module.aws_secret.db_secret_name
+      internal_alb_dns_name           = module.alb.internal_alb_dns_name
+      bucket_name                     = module.s3.panda_bucket_name
+      aws_region                      = var.region
+
+    }
+    command = "bash ../packer/packer-script.sh"
+  }
 }
+
+locals {
+  packer_manifest_backend = jsondecode(file("../packer/backend/manifest.json"))
+  packer_manifest_frontend = jsondecode(file("../packer/frontend/manifest.json"))
+  backend_ami_id  = split(":", local.packer_manifest_backend.builds[0].artifact_id)[1]
+  frontend_ami_id  = split(":", local.packer_manifest_frontend.builds[0].artifact_id)[1]
+}
+
+# output "backend_ami_id" {
+#   value = local.backend_ami_id
+# }
 
 
 module "asg" {
@@ -136,8 +173,10 @@ module "asg" {
   internal_alb_dns_name           = module.alb.internal_alb_dns_name
   bucket_name                     = module.s3.panda_bucket_name
   region                          = var.region
+  # backend_ami_id  =  local.backend_ami_id
+  # frontend_ami_id  = local.frontend_ami_id
   # key_name       = module.key.key_name
-  depends_on = [module.vpc, module.alb, module.iam_role, module.nat_instance, module.s3, module.rds] # Wait for VPC before DB
+  depends_on = [module.vpc, module.alb, module.iam_role, module.nat_instance, module.s3, module.rds, null_resource.build_ami] # Wait for VPC before DB
 
 }
 
