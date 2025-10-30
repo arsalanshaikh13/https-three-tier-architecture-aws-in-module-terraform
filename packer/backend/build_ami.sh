@@ -79,7 +79,7 @@ echo "Building backend AMI..."
 PACKER_LOG=1 PACKER_LOG_PATH=packer.log packer build \
   -var "aws_region=$aws_region" \
   -var "source_ami=$SOURCE_AMI" \
-  -var "instance_type=t4g.micro" \
+  -var "instance_type=t4g.small" \
   -var "vpc_id=$VPC_ID" \
   -var "subnet_id=$SUBNET_ID" \
   -var "ssh_username=ec2-user" \

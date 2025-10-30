@@ -18,7 +18,9 @@ variable "source_ami" {
 
 variable "instance_type" {
   type        = string
-  default     = "t4g.micro"
+  # default     = "t4g.micro"
+  # https://aws.amazon.com/ec2/instance-types/t4/
+  default     = "t4g.small"
   description = "EC2 instance type to use for the temporary build instance."
 }
 

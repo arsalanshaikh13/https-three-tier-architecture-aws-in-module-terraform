@@ -211,23 +211,6 @@ resource "aws_s3_bucket_public_access_block" "vpc_flow_logs" {
   restrict_public_buckets = true
 }
 
-# 2. Create an IAM role for VPC Flow Logs
-resource "aws_iam_role" "vpc_flow_logs_role" {
-  name = "VPCFlowLogsRole"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Action = "sts:AssumeRole",
-        Effect = "Allow",
-        Principal = {
-          Service = "vpc-flow-logs.amazonaws.com"
-        }
-      }
-    ]
-  })
-}
 
 # s3 bucket policy
 resource "aws_s3_bucket_policy" "vpc_flow_logs" {
@@ -276,65 +259,6 @@ resource "aws_s3_bucket_policy" "vpc_flow_logs" {
 })
 }
 
-# 3. Attach a policy to the IAM role allowing S3 put object access
-# resource "aws_iam_role_policy" "vpc_flow_logs_s3_policy" {
-#   name = "VPCFlowLogsS3Policy"
-#   role = aws_iam_role.vpc_flow_logs_role.id
-
-#   # policy = jsonencode({
-#   #   Version = "2012-10-17",
-#   #   Statement = [
-#   #     {
-#   #       Action = [
-#   #         "s3:PutObject"
-#   #       ],
-#   #       Effect = "Allow",
-#   #       Resource = "${aws_s3_bucket.vpc_flow_logs_bucket.arn}/AWSLogs/${data.aws_caller_identity.current.account_id}/*"
-#   #     }
-#   #   ]
-#   # })
-#   # https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs-s3-permissions.html
-#   policy = jsonencode({
-#     "Version":"2012-10-17",		 	 	 
-#     "Statement": [
-#         {
-#             "Sid": "AWSLogDeliveryWrite",
-#             "Effect": "Allow",
-#             "Principal": {
-#                 "Service": "delivery.logs.amazonaws.com"
-#             },
-#             "Action": "s3:PutObject",
-#             "Resource": "${aws_s3_bucket.vpc_flow_logs_bucket.arn}/AWSLogs/${data.aws_caller_identity.current.account_id}/*",
-#             "Condition": {
-#                 "StringEquals": {
-#                     "aws:SourceAccount": "${data.aws_caller_identity.current.account_id}",
-#                     "s3:x-amz-acl": "bucket-owner-full-control"
-#                 },
-#                 "ArnLike": {
-#                     "aws:SourceArn": "arn:aws:logs:us-east-1:${data.aws_caller_identity.current.account_id}:*"
-#                 }
-#             }
-#         },
-#         {
-#             "Sid": "AWSLogDeliveryAclCheck",
-#             "Effect": "Allow",
-#             "Principal": {
-#                 "Service": "delivery.logs.amazonaws.com"
-#             },
-#             "Action": "s3:GetBucketAcl",
-#             "Resource": "${aws_s3_bucket.vpc_flow_logs_bucket.arn}",
-#             "Condition": {
-#                 "StringEquals": {
-#                     "aws:SourceAccount": "${data.aws_caller_identity.current.account_id}"
-#                 },
-#                 "ArnLike": {
-#                     "aws:SourceArn": "arn:aws:logs:us-east-1:${data.aws_caller_identity.current.account_id}:*"
-#                 }
-#             }
-#         }
-#     ]
-# })
-# }
 
 # Data source to get the current AWS account ID
 data "aws_caller_identity" "current" {}
@@ -368,43 +292,6 @@ resource "aws_flow_log" "example_vpc_flow_log" {
 #   }
 # }
 
-# resource "aws_s3_bucket_policy" "vpc_flow_logs_bucket_policy" {
-#   bucket = aws_s3_bucket.vpc_flow_logs_bucket.id
-
-#   policy = jsonencode({
-#     Version = "2012-10-17",
-#     Statement = [
-#       {
-#         Sid       = "AWSLogDeliveryWrite",
-#         Effect    = "Allow",
-#         Principal = {
-#           Service = "delivery.logs.amazonaws.com"
-#         },
-#         Action = [
-#           "s3:PutObject"
-#         ],
-#         Resource = "${aws_s3_bucket.vpc_flow_logs_bucket.arn}/AWSLogs/${data.aws_caller_identity.current.account_id}/*",
-#         Condition = {
-#           StringEquals = {
-#             "s3:x-amz-acl" = "bucket-owner-full-control"
-#           }
-#         }
-#       },
-#       {
-#         Sid       = "AWSLogDeliveryCheck",
-#         Effect    = "Allow",
-#         Principal = {
-#           Service = "delivery.logs.amazonaws.com"
-#         },
-#         Action = [
-#           "s3:GetBucketAcl",
-#           "s3:ListBucket"
-#         ],
-#         Resource = "${aws_s3_bucket.vpc_flow_logs_bucket.arn}/AWSLogs/${data.aws_caller_identity.current.account_id}/*"
-#       }
-#     ]
-#   })
-# }
 
 # # Optional: KMS Key for S3 bucket encryption
 # resource "aws_kms_key" "vpc_flow_logs_key" {
@@ -466,20 +353,6 @@ resource "aws_flow_log" "example_vpc_flow_log" {
 
 # data "aws_caller_identity" "current" {}
 
-# clone parallax, clone aws sample app, clone lirw and upload to s3 and host website from s3
-# incorporate vpc flow logs, cloudwatch alarm notification through sns, ssl/route53/tls/https/certificate from acm
-# lets encrypt to use nginx
-# add vpc endpoint and vpc private link/ transit gateway vpc peering into terraform
-# learn ansible to configure software
-# terraform
-# make module based configuration for lirw app, integrate ssm/secret manager into the app
-# use existing modules from terraform
-# go through terraform series from piyush/rahul/abhishek
-# blog , procedure methodology to reproduce my project workflow 
-# making ecs, eks cluster using terraform
-
-# s3 with route 53
-# lirw with module based terraform
 
 
 # panda cloud vpc flow log policy in s3 bucket
@@ -524,3 +397,60 @@ resource "aws_flow_log" "example_vpc_flow_log" {
 #         }
 #     ]
 # }
+
+
+
+
+# clone parallax, clone aws sample app, clone lirw and upload to s3 and host website from s3
+# incorporate vpc flow logs, cloudwatch alarm notification through sns, ssl/route53/tls/https/certificate from acm
+# lets encrypt to use nginx
+# add vpc endpoint and vpc private link/ transit gateway vpc peering into terraform
+# learn ansible to configure software
+# terraform
+# make module based configuration for lirw app, integrate ssm/secret manager into the app
+# use existing modules from terraform
+# go through terraform series from piyush/rahul/abhishek
+# blog , procedure methodology to reproduce my project workflow 
+# making ecs, eks cluster using terraform
+
+# s3 with route 53
+# lirw with module based terraform
+# lirw with folder based module based terraform
+# maximizing for speed this time
+# lirw with packer-ssh, https/api-alb, sns email notification on cloudwatch alarm, with module-folder based configuration
+
+# folder structure
+# network
+# data.tf(data "terraform_remote_state")
+# main.tf
+# variables.tf
+# output.tf
+#   modules
+#     vpc
+#       main.tf
+#       variables.tf
+#       output.tf
+# compute
+# data.tf(data "terraform_remote_state")
+# main.tf
+# variables.tf
+# output.tf
+#   modules
+#     aws_instance
+#       main.tf
+#       variables.tf
+#       output.tf
+#     alb
+#       main.tf
+#       variables.tf
+#       output.tf
+#     asg
+#       main.tf
+#       variables.tf
+#       output.tf
+
+# setup.sh
+# cd network
+# terraform apply
+# cd ../compute
+# terraform apply

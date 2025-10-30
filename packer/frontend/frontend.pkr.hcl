@@ -14,7 +14,8 @@ variable "source_ami" {
 
 variable "instance_type" {
   type    = string
-  default = "t4g.micro"
+  # default = "t4g.micro"
+  default = "t4g.small"
 }
 
 variable "ssh_username" {

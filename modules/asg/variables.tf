@@ -3,7 +3,9 @@ variable "project_name"{}
 #     default = "ami-053b0d53c279acc90"
 # }
 variable "cpu" {
-    default = "t4g.micro"
+    # default = "t4g.micro"
+    # https://aws.amazon.com/ec2/instance-types/t4/
+    default = "t4g.small" # free tier till 31st dec/2025
 }
 # variable "key_name" {}
 variable "client_sg_id" {}
