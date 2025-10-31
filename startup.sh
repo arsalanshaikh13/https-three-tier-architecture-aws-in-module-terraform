@@ -1,6 +1,8 @@
 #!/bin/bash
 set -eo pipefail
 
+# git clone https://github.com/pandacloud1/AWS_Project1.git application-code
+
 # setup terraform state bucket
 cd backend-tfstate-bootstrap
 DIRECTORY_BACKEND=".terraform"
