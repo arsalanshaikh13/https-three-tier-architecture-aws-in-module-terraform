@@ -9,10 +9,10 @@ if [ -d "$DIRECTORY_BACKEND" ] ; then
   echo "Directory '$DIRECTORY_BACKEND' exists."
   if grep -q '"resources": \[\]' terraform.tfstate; then
     echo "tfstate does not contains resources."
-    terraform init  -upgrade
+    terraform init -reconfigure -upgrade
     terraform fmt
     terraform validate
-    terraform apply -auto-approve -parallelism=20
+    terraform apply -auto-approve -parallelism=20 -refresh=false
   fi
   echo "tfstate does  contain resources."
 
@@ -23,7 +23,7 @@ else
   terraform init -reconfigure
   terraform fmt
   terraform validate
-  terraform apply -auto-approve -parallelism=20
+  terraform apply -auto-approve -parallelism=20 -refresh=false
 fi
 # exit 1
 
@@ -89,9 +89,9 @@ source env.sh
 terraform init -reconfigure
 terraform fmt
 terraform validate
-terraform plan -out=graph/plan2.out
+terraform plan -out=graph/plan2.out -refresh=false
 terraform show -json graph/plan2.out > graph/plan2.json
-terraform apply -auto-approve -parallelism=20
+terraform apply -auto-approve -parallelism=20 -refresh=false
 terraform graph > graph/graph2.txt
 
 
