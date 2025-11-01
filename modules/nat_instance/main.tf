@@ -52,7 +52,8 @@ data "aws_ami" "latest_amazon_linux" {
 # Create the NAT instance in the public subnet
 resource "aws_instance" "nat_ec2_instance" {
     ami           = data.aws_ami.latest_amazon_linux.id
-    instance_type = "t4g.micro"  # ARM-based instance for cost optimization
+    # instance_type = "t4g.micro"  # ARM-based instance for cost optimization
+    instance_type = "t4g.small"  # 750 hrs free / month till dec 31 2025
     subnet_id     = var.pub_sub_1a_id
     associate_public_ip_address = true
     
