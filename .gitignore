@@ -69,3 +69,4 @@ env.sh
 .terragrunt-cache/
 .terraform.lock.hcl
 notes.txt
+terraform/graph/
