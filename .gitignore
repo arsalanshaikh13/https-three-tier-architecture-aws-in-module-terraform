@@ -32,7 +32,7 @@ override.tf.json
 terraform.rc
 
 # Ignore keys directory
-keys/
+# keys/
 
 # Packer files
 manifest.json
@@ -52,11 +52,11 @@ plan.*
 # Local .terraform directories
 **/.terraform/*
 .terraform/*
-*.hcl
+# *.hcl
 *.lock*
 ../.terraform/*
-terraform.*
-*.tfvars*
+# terraform.*
+# *.tfvars*
 
 # .tfstate files
 *.tfstate
@@ -64,3 +64,8 @@ terraform.*
 *.tfstate.*
 env.sh
 *.log
+
+**/logs/*
+.terragrunt-cache/
+.terraform.lock.hcl
+notes.txt

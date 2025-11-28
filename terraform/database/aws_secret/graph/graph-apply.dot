@@ -1,0 +1,7 @@
+digraph G {
+  rankdir = "RL";
+  node [shape = rect, fontname = "sans-serif"];
+  "aws_secretsmanager_secret.db_secret" [label="aws_secretsmanager_secret.db_secret"];
+  "aws_secretsmanager_secret_version.db_secret_version" [label="aws_secretsmanager_secret_version.db_secret_version"];
+  "aws_secretsmanager_secret_version.db_secret_version" -> "aws_secretsmanager_secret.db_secret";
+}
