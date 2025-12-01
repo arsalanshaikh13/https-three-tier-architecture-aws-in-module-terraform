@@ -13,7 +13,7 @@ set -euo pipefail
 # =========================================
 exec > >(tee /var/log/user-data.log) 2>&1
 # sudo -su ${ssh_username} # when ssh_pty = true this is not required
-cd /home/"${ssh_username}"
+cd /home/${ssh_username}
 
 # !!! IMP !!!
 # MODIFY BELOW CODE WITH YOUR S3 BUCKET NAME

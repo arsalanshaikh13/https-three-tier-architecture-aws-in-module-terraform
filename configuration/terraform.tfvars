@@ -33,7 +33,7 @@ nat_volume_size = 8
 
 flow_log_bucket_name = "vpc-flow-log-s3-bucket-panda"
 # acm config
-acm_validation_method = "DNS"
+acm_validation_method = "DNS" 
 # backend tfstate bootstrapping variables
 bucket_name             = "panda-app-bucket-terragrunt"
 backend_bucket_name = "panda-backend"

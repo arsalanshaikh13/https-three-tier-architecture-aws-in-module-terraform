@@ -14,10 +14,10 @@ operation=$1
 # Determine log file name
 case "$operation" in
   startup)
-    file_name="startup-apply-log"
+    file_name="startup-route53-log"
     ;;
   cleanup)
-    file_name="cleanup-apply-log"
+    file_name="cleanup-route53-log"
     ;;
   *)
     echo "Error: Invalid operation '$operation'. Use 'startup' or 'cleanup'"
@@ -103,7 +103,9 @@ case "$operation" in
       # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive  --experiment filter-flag --filter '!back*' --all -- plan  --parallelism 50
       # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive  --working-dir terraform/hosting/route53 -- apply  --parallelism 50
       # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --all -- apply -auto-approve --parallelism 50
-      TG_PROVIDER_CACHE=1 terragrunt run --non-interactive  --experiment filter-flag --filter '!back*' --filter '!nat*' --all -- apply -auto-approve --parallelism 50
+      TG_PROVIDER_CACHE=1 terragrunt run --non-interactive  --experiment filter-flag --filter '!back*' --filter '!nat' --all -- apply -auto-approve --parallelism 50
+      # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive  --working-dir terraform/permissions/acm -- apply -auto-approve --parallelism 50
+      # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --all -- state list
       # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --working-dir terraform/compute/ami -- apply -auto-approve --parallelism 50
       # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --working-dir terraform/hosting/cloudfront -- apply -auto-approve --parallelism 50
       # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --working-dir terraform/hosting/route53 -- apply -auto-approve --parallelism 50

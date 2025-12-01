@@ -83,12 +83,20 @@ dependency "cloudfront" {
   mock_outputs                            = include.global_mocks.locals.global_mock_outputs
   mock_outputs_allowed_terraform_commands = ["plan"]
 }
+dependency "acm" {
+  # config_path                             = "../acm"
+  config_path                             = "${dirname(dirname(get_terragrunt_dir()))}/permissions/acm"
+  mock_outputs                            = include.global_mocks.locals.global_mock_outputs
+  mock_outputs_allowed_terraform_commands = ["plan"]
+}
 
 
 inputs = {
   cloudfront_domain_name    = dependency.cloudfront.outputs.cloudfront_domain_name
   cloudfront_distro_aliases = dependency.cloudfront.outputs.cloudfront_aliases
   cloudfront_hosted_zone_id = dependency.cloudfront.outputs.cloudfront_hosted_zone_id
+  route53_zone_name        = dependency.acm.outputs.route53_zone_name
+  route53_zone_id        = dependency.acm.outputs.route53_zone_id
 
 }
 # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --all --  plan 

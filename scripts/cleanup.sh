@@ -1,32 +1,11 @@
 #!/bin/bash
 set -euo pipefail
 
-
-# # destroy_order=("hosting" "compute" "database" "nat_key"  "permissions" "network" "s3" )
-# destroy_order=("hosting/route53" "hosting/cloudfront" "compute/asg"
-#                "compute/null_resource" "compute/alb" "database/aws_secret"
-#                "database/rds" "nat_instance" "s3" "permissions/acm" 
-#                "permissions/iam_role" "network/security-group" "network/vpc" )
-
-# echo "🔥 Destroying Terraform stacks in reverse dependency order..."
-
-# for dir in "${destroy_order[@]}"; do
-#   echo "🧨 Destroying ${dir}..."
-#   # cd $dir
-#   # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive  --all  -- destroy -auto-approve -lock=false --parallelism 20   || true
-#   TG_PROVIDER_CACHE=1 terragrunt run --non-interactive  --working-dir $dir   -- destroy -auto-approve  --parallelism 20   || true
-#   # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive  --working-dir hosting/route53  -- destroy -auto-approve -lock=false --parallelism 20   || true
-#   # cd ..
-# done
-
-# echo "✅ All stacks destroyed successfully."
-
+echo "🧹 Starting Terraform cleanup process..."
 # Folders that should be destroyed in parallel
 sequential_destroy_one=(
   "terraform/hosting/route53"
-  "terraform/hosting/cloudfront"  
 )
-
 
 echo "🔥 Destroying selected Terraform stacks in sequence..."
 
@@ -41,47 +20,41 @@ for dir in "${sequential_destroy_one[@]}"; do
 
 done
 
-# echo "⏳ Waiting for sequential tasks to complete..."
-# wait
+echo "⏳ Waiting for sequential tasks to complete..."
+wait
 echo "✅ sequential destroy completed."
 
-# parallel_destroy_one=(
-#   "terraform/hosting/waf"
-#   "terraform/compute/alarm"  
-#   "terraform/compute/vpc_endpoint"
-#   "terraform/nat_key/nat_instance" 
+parallel_destroy_one=(
+  "terraform/hosting/cloudfront"  
+  "terraform/compute/asg"
+  "terraform/nat_key/nat_instance" 
+)
 
-# )
-# echo "🔥 Destroying selected Terraform stacks in parallel..."
+echo "🔥 Destroying selected Terraform stacks in parallel..."
 
-# # ---- PARALLEL BLOCK ----
-# for dir in "${parallel_destroy_one[@]}"; do
-#   echo "🚀 Starting destroy in background: $dir"
+# ---- PARALLEL BLOCK ----
+for dir in "${parallel_destroy_one[@]}"; do
+  echo "🚀 Starting destroy in background: $dir"
 
-#   TG_PROVIDER_CACHE=1 terragrunt run \
-#     --non-interactive \
-#     --working-dir "$dir" \
-#     -- destroy -auto-approve --parallelism 20 || true &
+  TG_PROVIDER_CACHE=1 terragrunt run \
+    --non-interactive \
+    --working-dir "$dir" \
+    -- destroy -auto-approve --parallelism 20 || true &
 
-# done
+done
 
-# echo "⏳ Waiting for parallel tasks to complete..."
-# wait
-# echo "✅ Parallel destroy completed."
+echo "⏳ Waiting for parallel tasks to complete..."
+wait
+echo "✅ Parallel destroy completed."
 
 # ---- SEQUENTIAL BLOCK ----
 # compute folders destroyed in order (sequential)
 sequential_destroy_two=(
-  "terraform/compute/asg"
   "terraform/compute/alb" 
   "terraform/database/aws_secret"
-  "terraform/nat_key/nat_instance" 
-
 
 )
-#   # "terraform/compute/ami" 
 #   # "terraform/database/ssm_prm"
-#   # "compute/null_resource" 
 
 echo "🔥 Destroying compute stacks sequentially..."
 
@@ -101,15 +74,12 @@ echo "✅ sequential destroy completed."
 
 parallel_destroy_two=(
   "terraform/database/rds"
-  "terraform/nat_key/nat" 
   "terraform/nat_key/key" 
   "terraform/s3"
-  "terraform/permissions/acm" 
+  "terraform/permissions/acm"
   "terraform/permissions/iam_role"
 )
-  # "terraform/permissions/f_log"
-  # "terraform/database/aws_secret"
-  # "terraform/permissions/vpc_flow_logs"
+  # "terraform/nat_key/nat" 
 
 echo "🔥 Destroying selected Terraform stacks in parallel..."
 
@@ -131,10 +101,9 @@ wait
 echo "✅ parallel destroy two completed."
 
 sequential_destroy_three=(
-      "terraform/network/security-group" 
-      "terraform/network/vpc"
-  )
-      # "terraform/network/sg" 
+  "terraform/network/security-group" 
+  "terraform/network/vpc"
+)
 
 # ---- SEQUENTIAL BLOCK ----
 echo "🔥 Destroying remaining stacks sequentially..."
@@ -159,3 +128,8 @@ echo "🎉 destroying  tfstate backend s3 and dynamodb table!"
     -- destroy -auto-approve --parallelism 20 || true
 
 echo "🎉 tfstate backend s3 and dynamodb table destroyed successfully  from s3!"
+
+# echo "removing terragrunt cache directories..."
+find . -type d -name ".terragrunt-cache" -prune -print -exec rm -rf {} \;
+find . -type f -name ".terraform.lock.hcl" -prune -print -exec rm -f {} \;
+

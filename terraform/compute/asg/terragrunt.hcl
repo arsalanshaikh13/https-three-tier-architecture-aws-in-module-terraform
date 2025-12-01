@@ -169,7 +169,6 @@ dependency "acm" {
 }
 
 inputs = {
-  project_name                    = dependency.vpc.outputs.project_name
   pri_sub_3a_id                   = dependency.vpc.outputs.pri_sub_3a_id
   pri_sub_4b_id                   = dependency.vpc.outputs.pri_sub_4b_id
   pri_sub_5a_id                   = dependency.vpc.outputs.pri_sub_5a_id

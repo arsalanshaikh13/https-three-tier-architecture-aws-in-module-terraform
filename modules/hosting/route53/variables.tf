@@ -20,3 +20,22 @@ variable "cloudfront_distro_aliases" {
   description = "cloudfront_distro_aliases variable"
 }
 
+variable "route53_zone_id" {
+  type        = string
+  description = "route53_zone_id variable"
+}
+
+variable "route53_zone_name" {
+  type        = string
+  description = "route53_zone_name variable"
+}
+
+variable "environment" {
+  type        = string
+  description = "environment variable"
+}
+# variable "certificate_domain_name" {
+#   type        = string
+#   description = "certificate_domain_name variable"
+# }
+

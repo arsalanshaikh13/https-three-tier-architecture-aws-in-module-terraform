@@ -70,3 +70,4 @@ env.sh
 .terraform.lock.hcl
 notes.txt
 terraform/graph/
+**/ssm_prm/**

@@ -17,11 +17,26 @@ resource "aws_acm_certificate" "cert" {
   }
 }
 
-# create dns record in route53 for certificate
-data "aws_route53_zone" "public-zone" {
-  name         = var.certificate_domain_name
-  private_zone = false
+# since certificate is being created using dns validation method, we need to create route53 records for validation
+resource "aws_route53_zone" "devsandbox" {
+  # name    = "devsandbox.space"
+  name    = var.certificate_domain_name
+  comment = "Hosted zone for ${var.certificate_domain_name} domain"
+
+  tags = {
+    Name        = "${var.certificate_domain_name}-domain-name"
+    Environment = var.environment
+    ManagedBy   = "terraform"
+  }
 }
+
+
+
+# create dns record in route53 for certificate
+# data "aws_route53_zone" "public-zone" {
+#   name         = var.certificate_domain_name
+#   private_zone = false
+# }
 
 resource "aws_route53_record" "cert_validation_record" {
   for_each = {
@@ -37,7 +52,9 @@ resource "aws_route53_record" "cert_validation_record" {
   records         = [each.value.record]
   ttl             = 60
   type            = each.value.type
-  zone_id         = data.aws_route53_zone.public-zone.zone_id
+  # zone_id         = data.aws_route53_zone.public-zone.zone_id
+  zone_id         = aws_route53_zone.devsandbox.zone_id
+  depends_on = [ aws_route53_zone.devsandbox ]
 }
 
 
