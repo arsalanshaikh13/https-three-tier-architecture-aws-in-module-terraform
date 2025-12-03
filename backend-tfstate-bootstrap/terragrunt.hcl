@@ -26,15 +26,15 @@ terraform {
 
 locals {
 
-  config_hcl         = read_terragrunt_config("${get_repo_root()}/configuration/config.hcl")
+  config_hcl          = read_terragrunt_config("${get_repo_root()}/configuration/config.hcl")
   region              = local.config_hcl.locals.region
   backend_bucket_name = local.config_hcl.locals.backend_bucket_name
   dynamodb_table      = local.config_hcl.locals.dynamodb_table
-  environment      = local.config_hcl.locals.environment
+  environment         = local.config_hcl.locals.environment
 
   # terraform_required_version    = local.config_hcl.locals.terraform_required_version
   # aws_provider_version      = local.config_hcl.locals.aws_provider_version
-  provider_version      = local.config_hcl.locals.provider_version
+  provider_version = local.config_hcl.locals.provider_version
 }
 
 # Automatically generate provider.tf for all subfolders
@@ -63,5 +63,5 @@ inputs = {
   backend_bucket_name = local.backend_bucket_name
   dynamodb_table      = local.dynamodb_table
   region              = local.region
-  environment              = local.environment
+  environment         = local.environment
 }

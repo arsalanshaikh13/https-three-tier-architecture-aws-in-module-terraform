@@ -18,7 +18,7 @@ locals {
 terraform {
   # source = "../../../../modules/app"
   # source = "${path_relative_from_include("root")}/modules/compute/asg"
-  source = "tfr://gitlab.com/arsalanshaikh13/tf-modules-panda-user-data/aws//compute/asg?version=1.0.0-ssm-prm"
+  source = "tfr://gitlab.com/arsalanshaikh13/tf-modules-panda-user-data/aws//compute/asg?version=1.0.0-secret"
   # Notice the git:: prefix and the https protocol
   # source = "git::https://gitlab.com/arsalanshaikh13/tf-modules-panda-user-data.git//modules/compute/asg?ref=main"
   # source = "git::ssh://git@gitlab.com/arsalanshaikh13/tf-modules-panda-user-data.git//modules/compute/asg?ref=main"
@@ -90,88 +90,64 @@ terraform {
   }
 }
 
-# Generate extended provider block (adds local & null)
-generate "provider_compute" {
-  path      = "provider.tf"
-  if_exists = "overwrite_terragrunt"
-  contents  = <<EOF
-terraform {
-  required_version = "${local.provider_version["terraform"]}"
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "${local.provider_version["aws"]}"
-    }
-    local = {
-      source  = "hashicorp/local"
-      version = "${local.provider_version["local"]}"
-    }
-  }
-}
-provider "aws" {
-  region = "${local.region}"
-}
-
-EOF
-}
 
 
 dependency "vpc" {
   # config_path                             = "../../network/vpc"
   config_path                             = "${dirname(dirname(get_terragrunt_dir()))}/network/vpc"
   mock_outputs                            = include.global_mocks.locals.global_mock_outputs
-  mock_outputs_allowed_terraform_commands = ["plan"]
+  mock_outputs_allowed_terraform_commands = ["plan", "apply"]
 }
 
 dependency "security-group" {
   config_path                             = "${dirname(dirname(get_terragrunt_dir()))}/network/security-group"
   mock_outputs                            = include.global_mocks.locals.global_mock_outputs
-  mock_outputs_allowed_terraform_commands = ["plan"]
+  mock_outputs_allowed_terraform_commands = ["plan", "apply"]
 }
 
 dependency "rds" {
   # config_path                             = "../../database/rds"
   config_path                             = "${dirname(dirname(get_terragrunt_dir()))}/database/rds"
   mock_outputs                            = include.global_mocks.locals.global_mock_outputs
-  mock_outputs_allowed_terraform_commands = ["plan"]
+  mock_outputs_allowed_terraform_commands = ["plan", "apply"]
 }
 
 dependency "iam_role" {
   config_path                             = "${dirname(dirname(get_terragrunt_dir()))}/permissions/iam_role"
   mock_outputs                            = include.global_mocks.locals.global_mock_outputs
-  mock_outputs_allowed_terraform_commands = ["plan"]
+  mock_outputs_allowed_terraform_commands = ["plan", "apply"]
 }
 
 dependency "alb" {
   # config_path                             = "../alb"
   config_path                             = "${dirname(get_terragrunt_dir())}/alb"
   mock_outputs                            = include.global_mocks.locals.global_mock_outputs
-  mock_outputs_allowed_terraform_commands = ["plan"]
+  mock_outputs_allowed_terraform_commands = ["plan", "apply"]
 }
 
 dependency "s3" {
   # config_path                             = "../../s3"
   config_path                             = "${dirname(dirname(get_terragrunt_dir()))}/s3"
   mock_outputs                            = include.global_mocks.locals.global_mock_outputs
-  mock_outputs_allowed_terraform_commands = ["plan"]
+  mock_outputs_allowed_terraform_commands = ["plan", "apply"]
 }
 dependency "key" {
   # config_path                             = "../../nat_key/key"
   config_path                             = "${dirname(dirname(get_terragrunt_dir()))}/nat_key/key"
   mock_outputs                            = include.global_mocks.locals.global_mock_outputs
-  mock_outputs_allowed_terraform_commands = ["plan"]
+  mock_outputs_allowed_terraform_commands = ["plan", "apply"]
 }
-# dependency "aws_secret" {
-#   # config_path                             = "../../nat_key/aws_secret"
-#   config_path                             = "${dirname(dirname(get_terragrunt_dir()))}/database/aws_secret"
-#   mock_outputs                            = include.global_mocks.locals.global_mock_outputs
-#   mock_outputs_allowed_terraform_commands = ["plan"]
-# }
+dependency "aws_secret" {
+  # config_path                             = "../../nat_key/aws_secret"
+  config_path                             = "${dirname(dirname(get_terragrunt_dir()))}/database/aws_secret"
+  mock_outputs                            = include.global_mocks.locals.global_mock_outputs
+  mock_outputs_allowed_terraform_commands = ["plan", "apply"]
+}
 dependency "acm" {
   # config_path                             = "../../nat_key/aws_secret"
   config_path                             = "${dirname(dirname(get_terragrunt_dir()))}/permissions/acm"
   mock_outputs                            = include.global_mocks.locals.global_mock_outputs
-  mock_outputs_allowed_terraform_commands = ["plan"]
+  mock_outputs_allowed_terraform_commands = ["plan", "apply"]
 }
 
 inputs = {
@@ -184,17 +160,17 @@ inputs = {
   tg_arn                          = dependency.alb.outputs.tg_arn
   internal_tg_arn                 = dependency.alb.outputs.internal_tg_arn
   internal_alb_dns_name           = dependency.alb.outputs.internal_alb_dns_name
-  alb_domain_name = dependency.alb.outputs.alb_dns_name
+  alb_domain_name                 = dependency.alb.outputs.alb_dns_name
   s3_ssm_cw_instance_profile_name = dependency.iam_role.outputs.s3_ssm_cw_instance_profile_name
   db_dns_address                  = dependency.rds.outputs.db_dns_address
   db_endpoint                     = dependency.rds.outputs.db_endpoint
   bucket_name                     = dependency.s3.outputs.bucket_name
   client_key_name                 = dependency.key.outputs.client_key_name
   server_key_name                 = dependency.key.outputs.server_key_name
-  acm_certificate_arn                  = dependency.acm.outputs.acm_certificate_arn
+  acm_certificate_arn             = dependency.acm.outputs.acm_certificate_arn
+  db_secret_name                       = dependency.aws_secret.outputs.db_secret_name
   # frontend_ami_id                 = dependency.ami.outputs.frontend_ami_id
   # backend_ami_id                  = dependency.ami.outputs.backend_ami_id
-  # db_secret_name                  = dependency.aws_secret.outputs.db_secret_name
 
 
 

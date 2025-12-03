@@ -12,14 +12,14 @@ include "global_mocks" {
 terraform {
   # source = "../../../../modules/app"
   # source = "${path_relative_from_include("root")}/modules/hosting/cloudfront"
-    source = "tfr://gitlab.com/arsalanshaikh13/tf-modules-panda-user-data/aws//hosting/cloudfront?version=1.0.0-data-route53"
+  source = "tfr://gitlab.com/arsalanshaikh13/tf-modules-panda-user-data/aws//hosting/cloudfront?version=1.0.0-data-route53"
   # Notice the git:: prefix and the https protocol
   # source = "git::https://gitlab.com/arsalanshaikh13/tf-modules-panda-user-data.git//modules/hosting/cloudfront?ref=main"
   # source = "git::ssh://git@gitlab.com/arsalanshaikh13/tf-modules-panda-user-data.git//modules/hosting/cloudfront?ref=main"
   # source = "git::https://github.com/arsalanshaikh13/https-three-tier-architecture-aws-in-module-terraform.git//modules/hosting/cloudfront?ref=v1-terragrunt"
   # source = "git::ssh://git@github.com/arsalanshaikh13/https-three-tier-architecture-aws-in-module-terraform.git//modules/hosting/cloudfront?ref=v1-terragrunt"
 
-  
+
 
   # You can also specify multiple extra arguments for each use case. Here we configure terragrunt to always pass in the
   # `common.tfvars` var file located by the parent terragrunt config.
@@ -62,7 +62,7 @@ terraform {
     ]
   }
 
-  
+
   after_hook "post_apply_graph" {
     commands = ["apply"]
     execute  = ["bash", "-c", "echo 'Running terraform graph'; mkdir -p '${get_terragrunt_dir()}'/graph; terraform graph > '${get_terragrunt_dir()}'/graph/graph-apply.dot"]
@@ -91,20 +91,20 @@ dependency "acm" {
   # config_path                             = "../../permissions/acm"
   config_path                             = "${dirname(dirname(get_terragrunt_dir()))}/permissions/acm"
   mock_outputs                            = include.global_mocks.locals.global_mock_outputs
-  mock_outputs_allowed_terraform_commands = ["plan"]
+  mock_outputs_allowed_terraform_commands = ["plan", "apply"]
 }
 dependency "alb" {
   # config_path                             = "../../compute/alb"
   config_path                             = "${dirname(dirname(get_terragrunt_dir()))}/compute/alb"
   mock_outputs                            = include.global_mocks.locals.global_mock_outputs
-  mock_outputs_allowed_terraform_commands = ["plan"]
+  mock_outputs_allowed_terraform_commands = ["plan", "apply"]
 }
 
 
 
 inputs = {
   acm_certificate_arn = dependency.acm.outputs.acm_certificate_arn
-  alb_domain_name = dependency.alb.outputs.alb_dns_name
+  alb_domain_name     = dependency.alb.outputs.alb_dns_name
 }
 # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --all --  plan 
 # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --all --  apply -auto-approve

@@ -101,8 +101,6 @@ inputs = {
   cloudfront_domain_name    = dependency.cloudfront.outputs.cloudfront_domain_name
   cloudfront_distro_aliases = dependency.cloudfront.outputs.cloudfront_aliases
   cloudfront_hosted_zone_id = dependency.cloudfront.outputs.cloudfront_hosted_zone_id
-  # route53_zone_name        = dependency.acm.outputs.route53_zone_name
-  # route53_zone_id        = dependency.acm.outputs.route53_zone_id
 
 }
 # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --all --  plan 

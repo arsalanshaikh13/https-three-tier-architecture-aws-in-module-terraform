@@ -109,7 +109,7 @@ inputs = {
   vpc_id             = dependency.vpc.outputs.vpc_id
   alb_sg_id          = dependency.security-group.outputs.alb_sg_id
   internal_alb_sg_id = dependency.security-group.outputs.internal_alb_sg_id
-  
+
 }
 # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --all --  plan 
 # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --all --  apply -auto-approve

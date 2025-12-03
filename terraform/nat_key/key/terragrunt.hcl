@@ -19,7 +19,7 @@ locals {
   # backend_manifest  = "${local.packer_folder}/backend/manifest.json"
   # aws_provider_version = include.root.locals.aws_provider_version
   # local_provider_version = include.root.locals.local_provider_version
-  region = include.root.locals.region
+  region           = include.root.locals.region
   provider_version = include.root.locals.provider_version
 
 }
@@ -84,7 +84,7 @@ terraform {
   #     EOT
   #   ]
   # }
-  
+
   after_hook "delete_keys" {
     commands = ["destroy"]
     execute = [
@@ -95,7 +95,7 @@ terraform {
       EOT
     ]
   }
-  
+
   before_hook "pre_validate" {
     commands = ["plan"]
     execute  = ["bash", "-c", "echo 'Running terraform validate'; terraform validate"]

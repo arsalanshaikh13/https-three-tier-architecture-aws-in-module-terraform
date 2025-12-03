@@ -85,13 +85,13 @@ locals {
     cloudfront_waf_arn              = "arn:aws:webapplicationfirewall:us-east-1:123456789012:waf/app/publ/mock123"
     frontend_ami_id                 = "ami-safdasdsadfasf"
     backend_ami_id                  = "ami-safdasdsadfasf"
-    client_key_name                  = "ami-safdasdsadfasf"
-    server_key_name                  = "ami-safdasdsadfasf"
-    client_asg_name                  = "ami-safdasdsadfasf"
-    server_asg_name                  = "ami-safdasdsadfasf"
-    cloudfront_domain_name    = "mock-endpoint.example.com"
-    cloudfront_aliases = ["mock-endpoint.example.com"]
-    cloudfront_hosted_zone_id = "Z123MOCKZONEID"
+    client_key_name                 = "ami-safdasdsadfasf"
+    server_key_name                 = "ami-safdasdsadfasf"
+    client_asg_name                 = "ami-safdasdsadfasf"
+    server_asg_name                 = "ami-safdasdsadfasf"
+    cloudfront_domain_name          = "mock-endpoint.example.com"
+    cloudfront_aliases              = ["mock-endpoint.example.com"]
+    cloudfront_hosted_zone_id       = "Z123MOCKZONEID"
 
 
   }

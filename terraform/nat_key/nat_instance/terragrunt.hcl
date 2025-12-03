@@ -113,7 +113,7 @@ inputs = {
   pri_rt_a_id                     = dependency.vpc.outputs.pri_rt_a_id
   pri_rt_b_id                     = dependency.vpc.outputs.pri_rt_b_id
   s3_ssm_cw_instance_profile_name = dependency.iam_role.outputs.s3_ssm_cw_instance_profile_name
-  nat_bastion_key_name = dependency.key.outputs.nat_bastion_key_name
+  nat_bastion_key_name            = dependency.key.outputs.nat_bastion_key_name
 }
 
 # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --all --  plan 

@@ -13,7 +13,7 @@ include "global_mocks" {
 terraform {
   # source = "../../../../modules/app"
   # source = "${path_relative_from_include("root")}/modules/s3"
-    source = "tfr://gitlab.com/arsalanshaikh13/tf-modules-panda-user-data/aws//s3?version=1.0.0-data-route53"
+  source = "tfr://gitlab.com/arsalanshaikh13/tf-modules-panda-user-data/aws//s3?version=1.0.0-data-route53"
   # Notice the git:: prefix and the https protocol
   # source = "git::https://gitlab.com/arsalanshaikh13/tf-modules-panda-user-data.git//modules/s3?ref=main"
   # source = "git::ssh://git@gitlab.com/arsalanshaikh13/tf-modules-panda-user-data.git//modules/s3?ref=main"
