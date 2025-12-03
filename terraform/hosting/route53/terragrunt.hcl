@@ -11,7 +11,13 @@ include "global_mocks" {
 
 terraform {
   # source = "../../../../modules/app"
-  source = "${path_relative_from_include("root")}/modules/hosting/route53"
+  # source = "${path_relative_from_include("root")}/modules/hosting/route53"
+  source = "tfr://gitlab.com/arsalanshaikh13/tf-modules-panda-user-data/aws//hosting/route53?version=1.0.0-data-route53"
+  # Notice the git:: prefix and the https protocol
+  # source = "git::https://gitlab.com/arsalanshaikh13/tf-modules-panda-user-data.git//modules/hosting/route53?ref=main"
+  # source = "git::ssh://git@gitlab.com/arsalanshaikh13/tf-modules-panda-user-data.git//modules/hosting/route53?ref=main"
+  # source = "git::https://github.com/arsalanshaikh13/https-three-tier-architecture-aws-in-module-terraform.git//modules/hosting/route53?ref=v1-terragrunt"
+  # source = "git::ssh://git@github.com/arsalanshaikh13/https-three-tier-architecture-aws-in-module-terraform.git//modules/hosting/route53?ref=v1-terragrunt"
 
   # You can also specify multiple extra arguments for each use case. Here we configure terragrunt to always pass in the
   # `common.tfvars` var file located by the parent terragrunt config.
@@ -95,8 +101,8 @@ inputs = {
   cloudfront_domain_name    = dependency.cloudfront.outputs.cloudfront_domain_name
   cloudfront_distro_aliases = dependency.cloudfront.outputs.cloudfront_aliases
   cloudfront_hosted_zone_id = dependency.cloudfront.outputs.cloudfront_hosted_zone_id
-  route53_zone_name        = dependency.acm.outputs.route53_zone_name
-  route53_zone_id        = dependency.acm.outputs.route53_zone_id
+  # route53_zone_name        = dependency.acm.outputs.route53_zone_name
+  # route53_zone_id        = dependency.acm.outputs.route53_zone_id
 
 }
 # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --all --  plan 

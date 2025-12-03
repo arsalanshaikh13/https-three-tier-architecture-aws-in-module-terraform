@@ -11,18 +11,30 @@ include "global_mocks" {
 }
 
 locals {
-  key_folder        = "${get_parent_terragrunt_dir("root")}/modules/nat_key/key"
+  # key_folder        = "${get_parent_terragrunt_dir("root")}/modules/nat_key/key"
   # client_key = "${local.ami_folder}/frontend_ami.txt"
   # server_k  = "${local.ami_folder}/backend_ami.txt"
   # packer_folder     = "${get_parent_terragrunt_dir("root")}/packer"
   # frontend_manifest = "${local.packer_folder}/frontend/manifest.json"
   # backend_manifest  = "${local.packer_folder}/backend/manifest.json"
+  # aws_provider_version = include.root.locals.aws_provider_version
+  # local_provider_version = include.root.locals.local_provider_version
+  region = include.root.locals.region
+  provider_version = include.root.locals.provider_version
+
 }
 
 
 terraform {
   # source = "../../../../modules/app"
-  source = "${path_relative_from_include("root")}/modules/nat_key/key"
+  # source = "${path_relative_from_include("root")}/modules/nat_key/key"
+  source = "tfr://gitlab.com/arsalanshaikh13/tf-modules-panda-user-data/aws//nat_key/key?version=1.0.0-key-ssh"
+  # Notice the git:: prefix and the https protocol
+  # source = "git::https://gitlab.com/arsalanshaikh13/tf-modules-panda-user-data.git//modules/nat_key/key?ref=main"
+  # source = "git::ssh://git@gitlab.com/arsalanshaikh13/tf-modules-panda-user-data.git//modules/nat_key/key?ref=main"
+  # source = "git::https://github.com/arsalanshaikh13/https-three-tier-architecture-aws-in-module-terraform.git//modules/nat_key/key?ref=v1-terragrunt"
+  # source = "git::ssh://git@github.com/arsalanshaikh13/https-three-tier-architecture-aws-in-module-terraform.git//modules/nat_key/key?ref=v1-terragrunt"
+
 
   # You can also specify multiple extra arguments for each use case. Here we configure terragrunt to always pass in the
   # `common.tfvars` var file located by the parent terragrunt config.
@@ -52,26 +64,41 @@ terraform {
     commands = ["plan"]
     execute  = ["bash", "-c", "echo 'Running terraform format'; terraform fmt --recursive"]
   }
-  before_hook "check_for_ssh_keys" {
-    commands = ["plan"]
-    # execute  = ["bash", "-c", "./key.sh '${get_parent_terragrunt_dir("root")}/modules/nat_key/key'"]
-    execute  = ["bash", "-c", "./key.sh ${local.key_folder}"]
-  }
-  before_hook "pre_validate" {
-    commands = ["plan"]
-    execute  = ["bash", "-c", "echo 'Running terraform validate'; terraform validate"]
-  }
 
+  # since i am creating ssh keys as a terraform resource in the module, so commenting this hook
+  # before_hook "check_for_ssh_keys" {
+  #   commands = ["plan"]
+  #   # execute  = ["bash", "-c", "./key.sh '${get_parent_terragrunt_dir("root")}/modules/nat_key/key'"]
+  #   execute  = ["bash", "-c", "./key.sh ${local.key_folder}"]
+  # }
+
+
+  # after_hook "delete_keys" {
+  #   commands = ["destroy"]
+  #   execute = [
+  #     "bash", "-c",
+  #     <<-EOT
+  #       echo "Deleting SSH keys from ${local.key_folder} folder"
+  #       cd "${local.key_folder}"
+  #       rm -f nat-bastion *.pub *_key
+  #     EOT
+  #   ]
+  # }
+  
   after_hook "delete_keys" {
     commands = ["destroy"]
     execute = [
       "bash", "-c",
       <<-EOT
-        echo "Deleting SSH keys from ${local.key_folder} folder"
-        cd "${local.key_folder}"
-        rm -f nat-bastion *.pub *_key
+        echo "Deleting SSH keys from folder"
+        rm -f *.pem
       EOT
     ]
+  }
+  
+  before_hook "pre_validate" {
+    commands = ["plan"]
+    execute  = ["bash", "-c", "echo 'Running terraform validate'; terraform validate"]
   }
 
   before_hook "tflint" {
@@ -109,6 +136,35 @@ terraform {
     execute  = ["bash", "-c", "echo '✅ Resources deleted successfully'"]
   }
 }
+# Generate extended provider block (adds local & null)
+generate "provider_compute" {
+  path      = "provider.tf"
+  if_exists = "overwrite_terragrunt"
+  contents  = <<EOF
+terraform {
+  required_version = "${local.provider_version["terraform"]}"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "${local.provider_version["aws"]}"
+    }
+    local = {
+      source  = "hashicorp/local"
+      version = "${local.provider_version["local"]}"
+    }
+    tls = {
+      source  = "hashicorp/tls"
+      version = "${local.provider_version["tls"]}"
+    }
+  }
+}
+provider "aws" {
+  region = "${local.region}"
+}
+
+EOF
+}
+
 
 
 # dependency "backend" {

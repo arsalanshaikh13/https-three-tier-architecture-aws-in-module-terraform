@@ -17,7 +17,13 @@ locals {
 
 terraform {
   # source = "../../../../modules/app"
-  source = "${path_relative_from_include("root")}/modules/compute/asg"
+  # source = "${path_relative_from_include("root")}/modules/compute/asg"
+  source = "tfr://gitlab.com/arsalanshaikh13/tf-modules-panda-user-data/aws//compute/asg?version=1.0.0-ssm-prm"
+  # Notice the git:: prefix and the https protocol
+  # source = "git::https://gitlab.com/arsalanshaikh13/tf-modules-panda-user-data.git//modules/compute/asg?ref=main"
+  # source = "git::ssh://git@gitlab.com/arsalanshaikh13/tf-modules-panda-user-data.git//modules/compute/asg?ref=main"
+  # source = "git::https://github.com/arsalanshaikh13/https-three-tier-architecture-aws-in-module-terraform.git//modules/compute/asg?ref=v1-terragrunt"
+  # source = "git::ssh://git@github.com/arsalanshaikh13/https-three-tier-architecture-aws-in-module-terraform.git//modules/compute/asg?ref=v1-terragrunt"
 
   # You can also specify multiple extra arguments for each use case. Here we configure terragrunt to always pass in the
   # `common.tfvars` var file located by the parent terragrunt config.
@@ -155,12 +161,12 @@ dependency "key" {
   mock_outputs                            = include.global_mocks.locals.global_mock_outputs
   mock_outputs_allowed_terraform_commands = ["plan"]
 }
-dependency "aws_secret" {
-  # config_path                             = "../../nat_key/aws_secret"
-  config_path                             = "${dirname(dirname(get_terragrunt_dir()))}/database/aws_secret"
-  mock_outputs                            = include.global_mocks.locals.global_mock_outputs
-  mock_outputs_allowed_terraform_commands = ["plan"]
-}
+# dependency "aws_secret" {
+#   # config_path                             = "../../nat_key/aws_secret"
+#   config_path                             = "${dirname(dirname(get_terragrunt_dir()))}/database/aws_secret"
+#   mock_outputs                            = include.global_mocks.locals.global_mock_outputs
+#   mock_outputs_allowed_terraform_commands = ["plan"]
+# }
 dependency "acm" {
   # config_path                             = "../../nat_key/aws_secret"
   config_path                             = "${dirname(dirname(get_terragrunt_dir()))}/permissions/acm"
@@ -183,12 +189,12 @@ inputs = {
   db_dns_address                  = dependency.rds.outputs.db_dns_address
   db_endpoint                     = dependency.rds.outputs.db_endpoint
   bucket_name                     = dependency.s3.outputs.bucket_name
-  # frontend_ami_id                 = dependency.ami.outputs.frontend_ami_id
-  # backend_ami_id                  = dependency.ami.outputs.backend_ami_id
   client_key_name                 = dependency.key.outputs.client_key_name
   server_key_name                 = dependency.key.outputs.server_key_name
-  db_secret_name                  = dependency.aws_secret.outputs.db_secret_name
   acm_certificate_arn                  = dependency.acm.outputs.acm_certificate_arn
+  # frontend_ami_id                 = dependency.ami.outputs.frontend_ami_id
+  # backend_ami_id                  = dependency.ami.outputs.backend_ami_id
+  # db_secret_name                  = dependency.aws_secret.outputs.db_secret_name
 
 
 

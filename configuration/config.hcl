@@ -11,5 +11,6 @@ locals {
     aws = "4.67.0"
     local = "~> 2.4"
     null_provider = "~> 3.2"
+    tls = "~> 4.0"
   }
 }

@@ -27,12 +27,11 @@ echo "✅ sequential destroy completed."
 parallel_destroy_one=(
   "terraform/hosting/cloudfront"  
   "terraform/compute/asg"
-  "terraform/nat_key/nat_instance" 
 )
 
 echo "🔥 Destroying selected Terraform stacks in parallel..."
 
-# ---- PARALLEL BLOCK ----
+# # ---- PARALLEL BLOCK ----
 for dir in "${parallel_destroy_one[@]}"; do
   echo "🚀 Starting destroy in background: $dir"
 
@@ -51,10 +50,12 @@ echo "✅ Parallel destroy completed."
 # compute folders destroyed in order (sequential)
 sequential_destroy_two=(
   "terraform/compute/alb" 
-  "terraform/database/aws_secret"
+  "terraform/database/ssm_prm"
+  "terraform/nat_key/nat_instance" 
+
 
 )
-#   # "terraform/database/ssm_prm"
+  # "terraform/database/aws_secret"
 
 echo "🔥 Destroying compute stacks sequentially..."
 
@@ -75,9 +76,9 @@ echo "✅ sequential destroy completed."
 parallel_destroy_two=(
   "terraform/database/rds"
   "terraform/nat_key/key" 
-  "terraform/s3"
   "terraform/permissions/acm"
   "terraform/permissions/iam_role"
+
 )
   # "terraform/nat_key/nat" 
 
@@ -101,6 +102,7 @@ wait
 echo "✅ parallel destroy two completed."
 
 sequential_destroy_three=(
+  "terraform/s3"
   "terraform/network/security-group" 
   "terraform/network/vpc"
 )
@@ -132,4 +134,4 @@ echo "🎉 tfstate backend s3 and dynamodb table destroyed successfully  from s3
 # echo "removing terragrunt cache directories..."
 find . -type d -name ".terragrunt-cache" -prune -print -exec rm -rf {} \;
 find . -type f -name ".terraform.lock.hcl" -prune -print -exec rm -f {} \;
-
+echo "✅ terragrunt cache directories removed."

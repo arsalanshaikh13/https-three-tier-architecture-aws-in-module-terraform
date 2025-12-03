@@ -11,7 +11,15 @@ include "global_mocks" {
 
 terraform {
   # source = "../../../../modules/app"
-  source = "${path_relative_from_include("root")}/modules/hosting/cloudfront"
+  # source = "${path_relative_from_include("root")}/modules/hosting/cloudfront"
+    source = "tfr://gitlab.com/arsalanshaikh13/tf-modules-panda-user-data/aws//hosting/cloudfront?version=1.0.0-data-route53"
+  # Notice the git:: prefix and the https protocol
+  # source = "git::https://gitlab.com/arsalanshaikh13/tf-modules-panda-user-data.git//modules/hosting/cloudfront?ref=main"
+  # source = "git::ssh://git@gitlab.com/arsalanshaikh13/tf-modules-panda-user-data.git//modules/hosting/cloudfront?ref=main"
+  # source = "git::https://github.com/arsalanshaikh13/https-three-tier-architecture-aws-in-module-terraform.git//modules/hosting/cloudfront?ref=v1-terragrunt"
+  # source = "git::ssh://git@github.com/arsalanshaikh13/https-three-tier-architecture-aws-in-module-terraform.git//modules/hosting/cloudfront?ref=v1-terragrunt"
+
+  
 
   # You can also specify multiple extra arguments for each use case. Here we configure terragrunt to always pass in the
   # `common.tfvars` var file located by the parent terragrunt config.
