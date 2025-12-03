@@ -1,6 +1,6 @@
 region                  = "us-east-1"
 
-project_name            = "panda-app"
+project_name            = "lirw-app"
 #choose environment
 environment = "dev"
 # vpc variables 
@@ -15,8 +15,8 @@ pri_sub_7a_cidr         = "10.0.7.0/24"
 pri_sub_8b_cidr         = "10.0.8.0/24"
 
 # security group 
-server_port = 4000
-server_sg_desc = "enable http/https access on port 4000 for server app sg"
+server_port = 3200 #4000
+server_sg_desc = "enable http/https access on port 3200/4000 for server app sg"
 db_security_port = 3306
 db_inbound_desc = "mysql access"
 db_sg_desc = "enable mysql access on port 3306 from server-sg"
@@ -31,28 +31,28 @@ nat_instance_type = "t4g.small" # 750 hrs free / month till dec 31 2025
 nat_volume_type = "standard"
 nat_volume_size = 8
 
-flow_log_bucket_name = "vpc-flow-log-s3-bucket-panda"
+flow_log_bucket_name = "vpc-flow-log-s3-bucket-lirw"
 # acm config
 acm_validation_method = "DNS" 
 # backend tfstate bootstrapping variables
-bucket_name             = "panda-app-bucket-terragrunt"
-backend_bucket_name = "panda-backend"
-dynamodb_table      = "panda-lock-table"
+bucket_name             = "lirw-app-bucket-terragrunt"
+backend_bucket_name = "lirw-backend"
+dynamodb_table      = "lirw-lock-table"
 
 # Database values which is to pass on to the rds and apps
 db_username             = "admin_3_tier"
 db_password             = "Asd1-CaPQ22"
-db_name                 = "panda_react_node_app"
+db_name                 = "lirw_react_node_app"
 db_port                 = "3306"
 
 # only specific to rds
 db_engine = "mysql"
-db_identifier = "panda-dev-db"
+db_identifier = "lirw-dev-db"
 db_instance_type = "db.t4g.micro"
 db_version = "8.0.42"
 db_storage_volume = 20
 db_storage_type = "standard"
-db_sub_name = "panda-db-subnet-a-b"
+db_sub_name = "lirw-db-subnet-a-b"
 retention_period = 0
 
 # asg variables
@@ -63,6 +63,9 @@ asg_health_check_type = "ELB" #"ELB" or default EC2
 
 # asg and null resource variables combined
 ami_type_name = "al2023-ami-2023.*-arm64"
+ami_virtualization_type = "hvm"
+ami_owner = "amazon"
+
 frontend_ami_type = "al2023-ami-2023.*-arm64"
 backend_ami_type = "al2023-ami-2023.*-arm64"
 backend_instance_type =  "t4g.small" # free tier till 31st dec/2025

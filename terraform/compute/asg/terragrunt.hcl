@@ -18,7 +18,7 @@ locals {
 terraform {
   # source = "../../../../modules/app"
   # source = "${path_relative_from_include("root")}/modules/compute/asg"
-  source = "tfr://gitlab.com/arsalanshaikh13/tf-modules-panda-user-data/aws//compute/asg?version=1.0.0-secret"
+  source = "tfr://gitlab.com/arsalanshaikh13/tf-modules-panda-user-data/aws//compute/asg?version=1.1.0-accepting-files"
   # Notice the git:: prefix and the https protocol
   # source = "git::https://gitlab.com/arsalanshaikh13/tf-modules-panda-user-data.git//modules/compute/asg?ref=main"
   # source = "git::ssh://git@gitlab.com/arsalanshaikh13/tf-modules-panda-user-data.git//modules/compute/asg?ref=main"
@@ -89,6 +89,30 @@ terraform {
     execute  = ["bash", "-c", "echo '✅ Resources deleted successfully'"]
   }
 }
+# Generate extended provider block (adds local & null)
+generate "provider_compute" {
+  path      = "provider.tf"
+  if_exists = "overwrite_terragrunt"
+  contents  = <<EOF
+terraform {
+  required_version = "${local.provider_version["terraform"]}"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "${local.provider_version["aws"]}"
+    }
+    local = {
+      source  = "hashicorp/local"
+      version = "${local.provider_version["local"]}"
+    }
+  }
+}
+provider "aws" {
+  region = "${local.region}"
+}
+
+EOF
+}
 
 
 
@@ -137,12 +161,12 @@ dependency "key" {
   mock_outputs                            = include.global_mocks.locals.global_mock_outputs
   mock_outputs_allowed_terraform_commands = ["plan", "apply"]
 }
-dependency "aws_secret" {
-  # config_path                             = "../../nat_key/aws_secret"
-  config_path                             = "${dirname(dirname(get_terragrunt_dir()))}/database/aws_secret"
-  mock_outputs                            = include.global_mocks.locals.global_mock_outputs
-  mock_outputs_allowed_terraform_commands = ["plan", "apply"]
-}
+# dependency "aws_secret" {
+#   # config_path                             = "../../nat_key/aws_secret"
+#   config_path                             = "${dirname(dirname(get_terragrunt_dir()))}/database/aws_secret"
+#   mock_outputs                            = include.global_mocks.locals.global_mock_outputs
+#   mock_outputs_allowed_terraform_commands = ["plan", "apply"]
+# }
 dependency "acm" {
   # config_path                             = "../../nat_key/aws_secret"
   config_path                             = "${dirname(dirname(get_terragrunt_dir()))}/permissions/acm"
@@ -168,12 +192,11 @@ inputs = {
   client_key_name                 = dependency.key.outputs.client_key_name
   server_key_name                 = dependency.key.outputs.server_key_name
   acm_certificate_arn             = dependency.acm.outputs.acm_certificate_arn
-  db_secret_name                       = dependency.aws_secret.outputs.db_secret_name
+  # db_secret_name                       = dependency.aws_secret.outputs.db_secret_name
   # frontend_ami_id                 = dependency.ami.outputs.frontend_ami_id
   # backend_ami_id                  = dependency.ami.outputs.backend_ami_id
-
-
-
+  client_sh_with_terragrunt = "${get_terragrunt_dir()}/client.sh"
+  server_sh_with_terragrunt = "${get_terragrunt_dir()}/server.sh"
 }
 # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --all --  plan 
 # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --all --  apply -auto-approve

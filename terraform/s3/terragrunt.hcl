@@ -13,7 +13,7 @@ include "global_mocks" {
 terraform {
   # source = "../../../../modules/app"
   # source = "${path_relative_from_include("root")}/modules/s3"
-  source = "tfr://gitlab.com/arsalanshaikh13/tf-modules-panda-user-data/aws//s3?version=1.0.0-data-route53"
+  source = "tfr://gitlab.com/arsalanshaikh13/tf-modules-panda-user-data/aws//s3?version=1.1.0-accepting-files"
   # Notice the git:: prefix and the https protocol
   # source = "git::https://gitlab.com/arsalanshaikh13/tf-modules-panda-user-data.git//modules/s3?ref=main"
   # source = "git::ssh://git@gitlab.com/arsalanshaikh13/tf-modules-panda-user-data.git//modules/s3?ref=main"
@@ -86,7 +86,8 @@ terraform {
 }
 
 inputs = {
-  upload_folder_with_terragrunt = "${get_parent_terragrunt_dir("root")}/application-code/application-code"
+  upload_folder_with_terragrunt = "${get_parent_terragrunt_dir("root")}/lirw-three-tier"
+  # upload_folder_with_terragrunt = "${get_parent_terragrunt_dir("root")}/application-code/application-code"
   # upload_folder_with_terragrunt = "${dirname(get_terragrunt_dir())}/lirw-three-tier"
   # upload_folder_with_terragrunt = "${path_relative_from_include("root")()}/application-code/application-code"
   # upload_folder_with_terragrunt = "${get_original_terragrunt_dir()}/application-code/application-code"

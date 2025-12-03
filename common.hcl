@@ -7,9 +7,6 @@ locals {
   region              = local.config_hcl.locals.region
   backend_bucket_name = local.config_hcl.locals.backend_bucket_name
   dynamodb_table      = local.config_hcl.locals.dynamodb_table
-  # aws_provider_version      = local.config_hcl.locals.aws_provider_version
-  # local_provider_version      = local.config_hcl.locals.local_provider_version
-  # null_provider_version      = local.config_hcl.locals null_provider_version
   provider_version = local.config_hcl.locals.provider_version
 }
 
