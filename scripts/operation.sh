@@ -14,10 +14,10 @@ operation=$1
 # Determine log file name
 case "$operation" in
   startup)
-    file_name="startup-module-lirw-log"
+    file_name="startup-module-lirw-secret-log"
     ;;
   cleanup)
-    file_name="cleanup-module-lirw-log"
+    file_name="cleanup-module-lirw-secret-log"
     ;;
   *)
     echo "Error: Invalid operation '$operation'. Use 'startup' or 'cleanup'"
@@ -105,7 +105,7 @@ case "$operation" in
       # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive  --working-dir terraform/hosting/route53 -- apply  --parallelism 50
       # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --all -- apply -auto-approve --parallelism 50
       # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive  --experiment filter-flag --filter '!back*' --filter '!nat' --all -- apply -auto-approve --parallelism 50
-      TG_PROVIDER_CACHE=1 terragrunt run --non-interactive  --experiment filter-flag --filter '!back*' --filter '!nat' --filter '!aws_secret' --all -- apply -auto-approve --parallelism 50
+      TG_PROVIDER_CACHE=1 terragrunt run --non-interactive  --experiment filter-flag --filter '!back*' --filter '!nat' --filter '!ssm_prm' --all -- apply -auto-approve --parallelism 50
       # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive  --working-dir terraform/permissions/acm -- apply -auto-approve --parallelism 50
       # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --all -- state list
       # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --working-dir terraform/compute/ami -- apply -auto-approve --parallelism 50
@@ -124,7 +124,7 @@ case "$operation" in
   cleanup)
     ./scripts/backend.sh cleanup
     # chmod +x cleanup.sh
-      TG_PROVIDER_CACHE=1 terragrunt --working-dir terraform/network/security-group force-unlock  1c5ca84c-08fe-3fa0-38b2-5d5252857c22
+      # TG_PROVIDER_CACHE=1 terragrunt --working-dir terraform/network/security-group force-unlock  1c5ca84c-08fe-3fa0-38b2-5d5252857c22
     ./scripts/cleanup.sh 2>&1 | tee "$LOG_FILE.tmp"
     ;;
 esac

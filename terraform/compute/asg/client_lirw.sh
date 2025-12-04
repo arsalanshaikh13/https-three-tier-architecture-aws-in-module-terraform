@@ -76,7 +76,7 @@ NGINX_CONF="/etc/nginx/nginx.conf"
 SERVER_NAME="_"  # Replace with your actual domain name
 
 # Backup existing NGINX configuration
-sudo cp $NGINX_CONF ${NGINX_CONF}.bak
+sudo cp $NGINX_CONF $NGINX_CONF.bak
 
 # Write new NGINX configuration
 sudo tee $NGINX_CONF > /dev/null <<EOL

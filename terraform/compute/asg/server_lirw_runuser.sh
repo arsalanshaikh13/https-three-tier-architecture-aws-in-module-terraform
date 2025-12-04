@@ -128,6 +128,7 @@ nvm use 16
 npm install -g pm2
 cd /home/${ssh_username}/backend
 npm install
+
 npm run serve
 npm audit fix || true
 
@@ -152,8 +153,8 @@ sudo env \
 sudo runuser -l ${ssh_username} -c 'pm2 save'
 
 # HEALTH CHECK
-# curl -f http://localhost:4000/health || echo "Health check failed"
 curl -f http://localhost:3200/health || echo "Health check failed"
+# curl -f http://localhost:4000/health || echo "Health check failed"
 
 # Install CloudWatch agent
 sudo yum install -y amazon-cloudwatch-agent

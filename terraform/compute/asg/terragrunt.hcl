@@ -161,12 +161,12 @@ dependency "key" {
   mock_outputs                            = include.global_mocks.locals.global_mock_outputs
   mock_outputs_allowed_terraform_commands = ["plan", "apply"]
 }
-# dependency "aws_secret" {
-#   # config_path                             = "../../nat_key/aws_secret"
-#   config_path                             = "${dirname(dirname(get_terragrunt_dir()))}/database/aws_secret"
-#   mock_outputs                            = include.global_mocks.locals.global_mock_outputs
-#   mock_outputs_allowed_terraform_commands = ["plan", "apply"]
-# }
+dependency "aws_secret" {
+  # config_path                             = "../../nat_key/aws_secret"
+  config_path                             = "${dirname(dirname(get_terragrunt_dir()))}/database/aws_secret"
+  mock_outputs                            = include.global_mocks.locals.global_mock_outputs
+  mock_outputs_allowed_terraform_commands = ["plan", "apply"]
+}
 dependency "acm" {
   # config_path                             = "../../nat_key/aws_secret"
   config_path                             = "${dirname(dirname(get_terragrunt_dir()))}/permissions/acm"
@@ -192,11 +192,11 @@ inputs = {
   client_key_name                 = dependency.key.outputs.client_key_name
   server_key_name                 = dependency.key.outputs.server_key_name
   acm_certificate_arn             = dependency.acm.outputs.acm_certificate_arn
-  # db_secret_name                       = dependency.aws_secret.outputs.db_secret_name
+  db_secret_name                       = dependency.aws_secret.outputs.db_secret_name
   # frontend_ami_id                 = dependency.ami.outputs.frontend_ami_id
   # backend_ami_id                  = dependency.ami.outputs.backend_ami_id
-  client_sh_with_terragrunt = "${get_terragrunt_dir()}/client.sh"
-  server_sh_with_terragrunt = "${get_terragrunt_dir()}/server.sh"
+  client_sh_with_terragrunt = "${get_terragrunt_dir()}/client_lirw.sh"
+  server_sh_with_terragrunt = "${get_terragrunt_dir()}/server_lirw.sh"
 }
 # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --all --  plan 
 # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --all --  apply -auto-approve

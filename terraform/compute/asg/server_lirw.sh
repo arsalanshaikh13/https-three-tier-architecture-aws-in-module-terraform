@@ -26,18 +26,25 @@ aws s3 cp s3://${bucket_name}/lirw-three-tier/backend backend --recursive
 
 # no secret name since we are using ssm parameter store
 # sudo sed -i "s/<secret-name>/<db_secret_name>/g" backend/configs/DbConfig.js
-sudo sed -i "s/<region>/${aws_region}/g" /home/${ssh_username}/backend/configs/DbConfig.js
-# sudo sed -i "s/<react_node_app>/`<db_name>`/g" /home/${ssh_username}/backend/db.sql
-sudo sed -i "s/<react_node_app>/${db_name}/g" /home/${ssh_username}/backend/db.sql
+sudo sed -i "s/<region>/${aws_region}/g" backend/configs/DbConfig.js
+sudo sed -i "s/<environment>/${environment}/g" backend/configs/DbConfig.js
+sudo sed -i "s/<secret-name>/${db_secret_name}/g" backend/configs/DbConfig.js
+# sudo sed -i "s/<react_node_app>/<db_name>/g" /backend/db.sql
+sudo sed -i "s/<react_node_app>/${db_name}/g" backend/db.sql
 
-sudo cat /home/${ssh_username}/backend/db.sql
 
-chown -R ${ssh_username}:${ssh_username} /home/${ssh_username}/backend
-chmod -R 755 /home/${ssh_username}/backend
 
+cat backend/db.sql
+
+chown -R ${ssh_username}:${ssh_username} backend
+# chown -R ${ssh_username}:${ssh_username} /home/${ssh_username}/backend
+
+chmod -R 755 /backend
+# chmod -R 755 /home/${ssh_username}/backend
 
 echo "========== Preparing SQL schema =========="
-cp /home/${ssh_username}/backend/db.sql /tmp/db.sql
+cp backend/db.sql /tmp/db.sql
+# cp /home/${ssh_username}/backend/db.sql /tmp/db.sql
 
 
 sudo wget https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm
@@ -66,11 +73,14 @@ sudo npm install -g pm2
 # Define variables 
 # REPO_URL="https://github.com/learnItRightWay01/react-node-mysql-app.git" 
 # BRANCH_NAME="feature/add-logging" 
-REPO_DIR="/home/${ssh_username}/backend" 
-ENV_FILE="$REPO_DIR/.env" 
+# REPO_DIR="/home/${ssh_username}/backend" 
+# REPO_DIR="backend" 
+# ENV_FILE="$REPO_DIR/.env" 
+cd backend
+ENV_FILE=".env" 
 
 # Clone the repository 
-cd /home/${ssh_username}/backend
+# cd /home/${ssh_username}/backend
 # sudo -u ${ssh_username} git clone $REPO_URL 
 # cd react-node-mysql-app  
 
@@ -80,19 +90,20 @@ cd /home/${ssh_username}/backend
 
 # Define the log directory and ensure it exists 
 # LOG_DIR="/home/${ssh_username}/react-node-mysql-app/backend/logs" 
-LOG_DIR="/home/${ssh_username}/backend/logs" 
+# LOG_DIR="/home/${ssh_username}/backend/logs" 
+
+LOG_DIR="logs" 
 mkdir -p $LOG_DIR 
-sudo chown -R ${ssh_username}:${ssh_username} $LOG_DIR
+chown -R ${ssh_username}:${ssh_username} $LOG_DIR
 
 
 # Append environment variables to the .env file
 echo "LOG_DIR=$LOG_DIR" >> "$ENV_FILE"
 echo "DB_HOST=${db_host}" >> "$ENV_FILE"
-echo "DB_PORT=\"3306\"" >> "$ENV_FILE"
+echo "DB_PORT=${db_port}" >> "$ENV_FILE"
 echo "DB_USER=${db_username}" >> "$ENV_FILE"
-echo "DB_PASSWORD="${db_password}"" >> "$ENV_FILE"  # Replace with actual password
-echo "DB_NAME="${db_name}"" >> "$ENV_FILE"
-
+echo "DB_PASSWORD=${db_password}" >> "$ENV_FILE"  # Replace with actual password
+echo "DB_NAME=${db_name}" >> "$ENV_FILE"
 
 # Install Node.js dependencies as ${ssh_username}
 sudo -u ${ssh_username} npm install
@@ -112,7 +123,8 @@ if sudo env PATH=$PATH:/usr/bin \
  --hp /home/${ssh_username}; then
     echo "PM2 startup configured successfully"
 else
-    echo "PM2 startup configuration failed, but continuing..."
+    echo "PM2 startup configuration failed, "
+    exit 1
 fi
 sudo -u ${ssh_username} pm2 save 
 

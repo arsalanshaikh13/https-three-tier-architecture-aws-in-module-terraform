@@ -1,49 +1,50 @@
 #!/bin/bash
 set -euo pipefail
 
-# echo "🧹 Starting Terraform cleanup process..."
-# # Folders that should be destroyed in parallel
-# sequential_destroy_one=(
-#   "terraform/hosting/route53"
-#   "terraform/hosting/cloudfront"  
-# )
-#   # "terraform/compute/asg"
-#   # "terraform/compute/alb" 
-#   # "terraform/nat_key/nat_instance" 
+echo "🧹 Starting Terraform cleanup process..."
+# Folders that should be destroyed in parallel
+sequential_destroy_one=(
+  "terraform/hosting/route53"
+  "terraform/hosting/cloudfront"  
+  "terraform/compute/asg"
+)
+  # "terraform/compute/alb" 
+  # "terraform/nat_key/nat_instance" 
 
-# echo "🔥 Destroying selected Terraform stacks in sequence..."
+echo "🔥 Destroying selected Terraform stacks in sequence..."
 
-# # ---- PARALLEL BLOCK ----
-# for dir in "${sequential_destroy_one[@]}"; do
-#   echo "🚀 Starting destroy in background: $dir"
+# ---- PARALLEL BLOCK ----
+for dir in "${sequential_destroy_one[@]}"; do
+  echo "🚀 Starting destroy in background: $dir"
 
-#   TG_PROVIDER_CACHE=1 terragrunt run \
-#     --non-interactive \
-#     --working-dir "$dir" \
-#     -- destroy -auto-approve --parallelism 20 
-#     # -- destroy -auto-approve --parallelism 20 || true 
+  TG_PROVIDER_CACHE=1 terragrunt run \
+    --non-interactive \
+    --working-dir "$dir" \
+    -- destroy -auto-approve --parallelism 20 
+    # -- destroy -auto-approve --parallelism 20 || true 
 
-# done
+done
 
-# echo "⏳ Waiting for sequential tasks to complete..."
-# wait
-# echo "✅ sequential destroy completed."
+echo "⏳ Waiting for sequential tasks to complete..."
+wait
+echo "✅ sequential destroy completed."
 
-# parallel_destroy_one=(
-#   "terraform/hosting/cloudfront"  
+# sequential_destroy_two=(
 #   "terraform/compute/asg"
 # )
+#   # "terraform/hosting/cloudfront"  
+
 
 # echo "🔥 Destroying selected Terraform stacks in parallel..."
 
 # # # ---- PARALLEL BLOCK ----
-# for dir in "${parallel_destroy_one[@]}"; do
+# for dir in "${sequential_destroy_two[@]}"; do
 #   echo "🚀 Starting destroy in background: $dir"
 
 #   TG_PROVIDER_CACHE=1 terragrunt run \
 #     --non-interactive \
 #     --working-dir "$dir" \
-#     -- destroy -auto-approve --parallelism 20  &
+#     -- destroy -auto-approve --parallelism 20  
 #     # -- destroy -auto-approve --parallelism 20 || true &
 
 # done
@@ -52,31 +53,32 @@ set -euo pipefail
 # wait
 # echo "✅ Parallel destroy completed."
 
-# # ---- SEQUENTIAL BLOCK ----
-# # compute folders destroyed in order (sequential)
-# sequential_destroy_two=(
-#   "terraform/compute/alb" 
-#   "terraform/nat_key/nat_instance" 
-# )
+# ---- SEQUENTIAL BLOCK ----
+# compute folders destroyed in order (sequential)
+parallel_destroy_one=(
+  "terraform/compute/alb" 
+  "terraform/nat_key/nat_instance" 
+)
 
-# echo "🔥 Destroying compute stacks sequentially..."
+echo "🔥 Destroying compute stacks sequentially..."
 
-# for dir in "${sequential_destroy_two[@]}"; do
-#   echo "🧨 Destroying $dir..."
+for dir in "${parallel_destroy_one[@]}"; do
+  echo "🧨 Destroying $dir..."
   
-#   TG_PROVIDER_CACHE=1 terragrunt run \
-#     --non-interactive \
-#     --working-dir "$dir" \
-#     -- destroy -auto-approve --parallelism 20 || true
-# done
+  TG_PROVIDER_CACHE=1 terragrunt run \
+    --non-interactive \
+    --working-dir "$dir" \
+    -- destroy -auto-approve --parallelism 20 &
+    # -- destroy -auto-approve --parallelism 20 || true
+done
 
 
-# echo "⏳ Waiting for sequential tasks to complete..."
-# wait
-# echo "✅ sequential destroy completed."
+echo "⏳ Waiting for sequential tasks to complete..."
+wait
+echo "✅ sequential destroy completed."
 
 parallel_destroy_two=(
-  "terraform/database/ssm_prm"
+  "terraform/database/aws_secret"
   "terraform/database/rds"
   "terraform/nat_key/key" 
   "terraform/permissions/acm"
@@ -84,7 +86,7 @@ parallel_destroy_two=(
   "terraform/s3"
 )
   # "terraform/nat_key/nat" 
-  # "terraform/database/aws_secret"
+  # "terraform/database/ssm_prm"
 
 echo "🔥 Destroying selected Terraform stacks in parallel..."
 
