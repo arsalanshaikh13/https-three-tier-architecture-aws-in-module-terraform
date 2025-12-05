@@ -10,23 +10,23 @@ if [ $# -eq 0 ]; then
 fi
 
 operation=$1
-
+filename=$1
 # Determine log file name
 case "$operation" in
   startup)
-    file_name="startup-module-lirw-secret-log"
+    file_name="startup-env-plan-log"
     ;;
   cleanup)
-    file_name="cleanup-module-lirw-secret-log"
+    file_name="cleanup-env-plan-log"
     ;;
   *)
     echo "Error: Invalid operation '$operation'. Use 'startup' or 'cleanup'"
     exit 1
     ;;
 esac
-
 # Set up log directory and file path
-LOG_DIR="terraform/logs"
+# LOG_DIR="terraform/logs"
+LOG_DIR="logs"
 mkdir -p "$LOG_DIR"
 
 # Find the highest existing numbered log file
@@ -94,28 +94,17 @@ case "$operation" in
     {
       # chmod +x backend.sh
       ./scripts/backend.sh startup
-      # since i am creating ssh keys as a terraform resource then no need to create ssh keys here
-      # check for SSH keys
-      # ./scripts/key.sh modules/nat_key/key
-      # cd terraform/hosting
-      # pwd
       echo "===== Terragrunt Apply Started at $(date) ====="
       # TG_PROVIDER_CACHE=1 terragrunt --working-dir terraform/s3 force-unlock  1c5ca84c-08fe-3fa0-38b2-5d5252857c22
       # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive  --experiment filter-flag --filter '!back*' --all -- plan  --parallelism 50
-      # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive  --working-dir terraform/hosting/route53 -- apply  --parallelism 50
+      # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive  -all -- plan  --parallelism 50
       # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --all -- apply -auto-approve --parallelism 50
-      # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive  --experiment filter-flag --filter '!back*' --filter '!nat' --all -- apply -auto-approve --parallelism 50
-      TG_PROVIDER_CACHE=1 terragrunt run --non-interactive  --experiment filter-flag --filter '!back*' --filter '!nat' --filter '!ssm_prm' --all -- apply -auto-approve --parallelism 50
+      TG_PROVIDER_CACHE=1 terragrunt run --non-interactive  --experiment filter-flag --filter '!back*' --filter '!nat' --filter '!aws_secret' --all -- apply -auto-approve --parallelism 50
+      # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive  --experiment filter-flag --filter '!back*' --filter '!nat' --filter '!ssm_prm' --all -- apply -auto-approve --parallelism 50
       # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive  --working-dir terraform/permissions/acm -- apply -auto-approve --parallelism 50
       # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --all -- state list
-      # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --working-dir terraform/compute/ami -- apply -auto-approve --parallelism 50
-      # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --working-dir terraform/hosting/cloudfront -- apply -auto-approve --parallelism 50
-      # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --working-dir terraform/hosting/route53 -- apply -auto-approve --parallelism 50
       # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --all -- plan --parallelism 50
       # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --all -- state list 
-      # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --all --experiment filter-flag --filter '!nat*' --filter '!f_log*' -- apply --parallelism 50
-      # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --all --experiment filter-flag --filter '!nat* | type=unit' --filter '!f_log* | type=unit' -- apply --parallelism 50
-      # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --all --experiment filter-flag --filter '!./terraform/nat_key/** | type=unit' -- apply --parallelism 50
       # terragrunt find --experiment filter-flag --filter './terraform/compute/** | type=unit' --filter './terraform/nat_key/** | type=unit'
       # terragrunt find --experiment filter-flag --filter './terraform/compute/** | type=unit' --filter './terraform/nat_key/** | type=unit'  --filter 'vpc* | type=unit'   --filter 'f_lo** | type=unit'
       echo "===== Terragrunt Apply Finished at $(date) ====="

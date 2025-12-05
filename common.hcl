@@ -1,22 +1,26 @@
-# https://www.youtube.com/watch?v=K-usNxyEETE&list=PL6YlWHeZL6SxXN_wNX2ZdkH40_iEf_SLq&index=18 - malek karemi nejad 
-# - be-devops terraform and terragrunt series
-
 locals {
-
-  config_hcl          = read_terragrunt_config("${get_repo_root()}/configuration/config.hcl")
+  # Determine environment based on path
+  environment = (
+    length(regexall(".*/terraform_dev/.*", get_terragrunt_dir())) > 0 ? "dev" :
+    length(regexall(".*/terraform_prod/.*", get_terragrunt_dir())) > 0 ? "prod" :
+    "unknown"
+  )
+  
+  # Load environment-specific config
+  config_hcl          = read_terragrunt_config("${get_repo_root()}/configuration/${local.environment}/config.hcl")
   region              = local.config_hcl.locals.region
   backend_bucket_name = local.config_hcl.locals.backend_bucket_name
   dynamodb_table      = local.config_hcl.locals.dynamodb_table
-  provider_version = local.config_hcl.locals.provider_version
+  provider_version    = local.config_hcl.locals.provider_version
 }
 
-#  Automatically generate provider.tf for all subfolders
+# Generate backend configuration
 generate "backend" {
   path      = "backend.tf"
   if_exists = "overwrite_terragrunt"
   contents  = <<EOF
 terraform {
-    backend  "s3"{
+  backend "s3" {
     bucket         = "${local.backend_bucket_name}"
     key            = "${path_relative_to_include()}/terraform.tfstate"
     region         = "${local.region}"
@@ -27,7 +31,8 @@ terraform {
 }
 EOF
 }
-# Automatically generate provider.tf for all subfolders
+
+# Generate provider configuration
 generate "provider" {
   path      = "provider.tf"
   if_exists = "overwrite"
@@ -47,20 +52,3 @@ provider "aws" {
 }
 EOF
 }
-
-# generate "debug" {
-#   path = "debug_outputs.txt"
-#   if_exists = "overwrite"
-#   contents = <<EOF
-#   terragrunt_dir: ${get_terragrunt_dir()}
-
-# original_terragrunt_dir: ${get_original_terragrunt_dir()}
-
-# get_repo_root: ${get_repo_root()}
-
-# get_parent_terragrunt_dir: ${get_parent_terragrunt_dir()}
-
-# get_working_dir: ${get_working_dir()}
-# EOF
-# }
-
