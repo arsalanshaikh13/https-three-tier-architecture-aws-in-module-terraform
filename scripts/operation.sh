@@ -19,11 +19,16 @@ check_command() {
 
 # Check required tools
 check_command terraform
-check_command packer
 check_command aws
 check_command jq
 check_command terragrunt
-# check_command ansible
+
+# Check configured CLI credentials (if env vars weren't used)
+if ! aws sts get-caller-identity >/dev/null 2>&1; then
+    echo "AWS CLI cannot authenticate with current credentials." 
+    echo "❌ ERROR: Invalid or missing AWS credentials."
+    exit 1
+fi
 
 
 operation=$1
