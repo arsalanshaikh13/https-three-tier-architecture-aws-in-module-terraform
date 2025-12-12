@@ -72,3 +72,4 @@ notes.txt
 terraform/graph/
 **/ssm_prm/**
 **/modules/**
+**/**lirw.sh

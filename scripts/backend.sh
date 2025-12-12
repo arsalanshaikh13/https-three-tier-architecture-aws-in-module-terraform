@@ -85,13 +85,20 @@ ENVIRONMENTS=("dev" "prod")
 # Function to check if backend has resources
 check_backend_state() {
   local env=$1
-  pwd
-  local state_file=$(find backend-tfstate-bootstrap/$env/.terragrunt-cache -type f -name "terraform.tfstate" 2>/dev/null | head -n 1 )
-  echo "steate_file: $state_file"
-  if [ -z "$state_file" ]; then
+
+  CACHE_DIR="backend-tfstate-bootstrap/$env/.terragrunt-cache"
+  if [ ! -d $CACHE_DIR ]; then
+
+    echo "❌ Backend state file not found. Running backend setup..."
+    return 1
+  fi
+  
+  local STATE_FILE=$(find backend-tfstate-bootstrap/$env/.terragrunt-cache -type f -name "terraform.tfstate" 2>/dev/null | head -n 1 )
+  # echo "steate_file: $STATE_FILE"
+  if [ -z "$STATE_FILE" ]; then
     echo "⚠️  ${env}: State file not found" >&2
     return 1
-  elif grep -q '"resources": *\[\]' "$state_file"; then
+  elif grep -q '"resources": *\[\]' "$STATE_FILE"; then
     echo "⚠️  ${env}: State file exists but empty" >&2
     return 1
   else

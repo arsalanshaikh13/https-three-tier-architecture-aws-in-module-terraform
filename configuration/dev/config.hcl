@@ -1,7 +1,7 @@
 locals {
   region              = "us-east-1"
-  backend_bucket_name = "lirw-backend-dev"
-  dynamodb_table      = "lirw-lock-table-dev"
+  backend_bucket_name = "panda-backend-dev"
+  dynamodb_table      = "panda-lock-table-dev"
   environment         = "dev"
   # terraform_required_version      = "~> 1.13.3"
   # aws_provider_version      = "4.67.0"

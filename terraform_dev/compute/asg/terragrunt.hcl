@@ -196,8 +196,8 @@ inputs = {
   # db_secret_name                       = dependency.aws_secret.outputs.db_secret_name
   # frontend_ami_id                 = dependency.ami.outputs.frontend_ami_id
   # backend_ami_id                  = dependency.ami.outputs.backend_ami_id
-  client_sh_with_terragrunt = "${get_terragrunt_dir()}/client_lirw.sh"
-  server_sh_with_terragrunt = "${get_terragrunt_dir()}/server_lirw.sh"
+  client_sh_with_terragrunt = "${get_terragrunt_dir()}/client_panda.sh"
+  server_sh_with_terragrunt = "${get_terragrunt_dir()}/server_panda.sh"
 }
 # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --all --  plan 
 # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --all --  apply -auto-approve

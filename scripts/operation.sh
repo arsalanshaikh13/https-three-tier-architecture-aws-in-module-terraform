@@ -9,15 +9,32 @@ if [ $# -eq 0 ]; then
   exit 1
 fi
 
+# Function to check if a command exists
+check_command() {
+    if ! command -v $1 &> /dev/null; then
+        echo "Error: $1 is required but not installed."
+        exit 1
+    fi
+}
+
+# Check required tools
+check_command terraform
+check_command packer
+check_command aws
+check_command jq
+check_command terragrunt
+# check_command ansible
+
+
 operation=$1
 filename=$1
 # Determine log file name
 case "$operation" in
   startup)
-    file_name="startup-env-plan-log"
+    file_name="startup-env-panda-apply-log"
     ;;
   cleanup)
-    file_name="cleanup-env-plan-log"
+    file_name="cleanup-env-panda-apply-log"
     ;;
   *)
     echo "Error: Invalid operation '$operation'. Use 'startup' or 'cleanup'"
@@ -52,6 +69,7 @@ cleanup() {
     rm "$LOG_FILE.tmp"
     echo " Error Log file saved to: $LOG_FILE"
   fi
+
 }
 
 handle_interrupt() {
@@ -99,7 +117,10 @@ case "$operation" in
       # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive  --experiment filter-flag --filter '!back*' --all -- plan  --parallelism 50
       # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive  -all -- plan  --parallelism 50
       # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --all -- apply -auto-approve --parallelism 50
-      TG_PROVIDER_CACHE=1 terragrunt run --non-interactive  --experiment filter-flag --filter '!back*' --filter '!nat' --filter '!aws_secret' --all -- apply -auto-approve --parallelism 50
+      # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive  --experiment filter-flag --filter '!./backend-tfstate-bootstrap/**' --filter '!nat' --filter '!aws_secret' --all -- plan  --parallelism 50
+      # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive  --experiment filter-flag --filter '!./back*/**' --filter '!nat' --filter '!aws_secret' --all -- plan  --parallelism 50
+      TG_PROVIDER_CACHE=1 terragrunt run --non-interactive  --experiment filter-flag --filter '!./back*/**' --filter '!nat' --filter '!aws_secret' --all -- apply -auto-approve  --parallelism 50
+      # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive  --experiment filter-flag --filter '!back*' --filter '!nat' --filter '!aws_secret' --all -- apply -auto-approve --parallelism 50
       # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive  --experiment filter-flag --filter '!back*' --filter '!nat' --filter '!ssm_prm' --all -- apply -auto-approve --parallelism 50
       # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive  --working-dir terraform/permissions/acm -- apply -auto-approve --parallelism 50
       # TG_PROVIDER_CACHE=1 terragrunt run --non-interactive --all -- state list
@@ -122,3 +143,4 @@ esac
 echo "Terragrunt completed successfully — output saved to $LOG_FILE"
 
 # # ./startup.sh 2>&1 | tee >(sed 's/\x1b\[[0-9;]*m//g' > logs/setupnew1.log )
+

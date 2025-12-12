@@ -1,6 +1,6 @@
 region                  = "us-east-1"
 
-project_name            = "lirw-app-dev"
+project_name            = "panda-app-dev"
 #choose environment
 environment = "dev"
 # vpc variables 
@@ -15,7 +15,7 @@ pri_sub_7a_cidr         = "10.0.7.0/24"
 pri_sub_8b_cidr         = "10.0.8.0/24"
 
 # security group 
-server_port = 3200 #4000
+server_port = 4000 # 3200 
 server_sg_desc = "enable http/https access on port 3200/4000 for server app sg"
 db_security_port = 3306
 db_inbound_desc = "mysql access"
@@ -31,28 +31,28 @@ nat_instance_type = "t4g.small" # 750 hrs free / month till dec 31 2025
 nat_volume_type = "standard"
 nat_volume_size = 8
 
-# flow_log_bucket_name = "vpc-flow-log-s3-bucket-lirw"
+# flow_log_bucket_name = "vpc-flow-log-s3-bucket-panda"
 # acm config
 acm_validation_method = "DNS" 
 # backend tfstate bootstrapping variables
-bucket_name             = "lirw-app-bucket-terragrunt-dev"
-backend_bucket_name = "lirw-backend-dev"
-dynamodb_table      = "lirw-lock-table-dev"
+bucket_name             = "panda-app-bucket-terragrunt-dev"
+backend_bucket_name = "panda-backend-dev"
+dynamodb_table      = "panda-lock-table-dev"
 
 # Database values which is to pass on to the rds and apps
 db_username             = "admin_3_tier_dev"
 db_password             = "Asd1-CaPQ22_dev"
-db_name                 = "lirw_react_node_app_dev"
+db_name                 = "panda_react_node_app_dev"
 db_port                 = "3306"
 
 # only specific to rds
 db_engine = "mysql"
-db_identifier = "lirw-dev-db"
+db_identifier = "panda-dev-db"
 db_instance_type = "db.t4g.micro"
 db_version = "8.0.42"
 db_storage_volume = 20
 db_storage_type = "standard"
-db_sub_name = "lirw-db-subnet-a-b-dev"
+db_sub_name = "panda-db-subnet-a-b-dev"
 retention_period = 0
 
 # asg variables

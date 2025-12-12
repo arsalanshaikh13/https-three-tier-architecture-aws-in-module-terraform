@@ -117,9 +117,10 @@ destroy() {
 
 
   echo "🎉 All stacks destroyed successfully!"
-
+  cd ..
 }
-env_folder=("terraform_prod" "terraform_dev")
+# env_folder=("terraform_dev" "terraform_prod" )
+env_folder=("terraform_prod" )
 
 for dir in ${env_folder[@]}; do
   destroy $dir
@@ -131,9 +132,17 @@ backend="backend-tfstate-bootstrap"
 
 # Loop over each environment inside backend folder
 for dir in "$backend"/*; do
-  [[ -d "$dir" ]] || continue   # skip non-directories
+  # [[ -d "$dir"  ]] || continue   # skip non-directories
+  # if [[ "$dir" == "dev" ]] ; then   # skip non-directories
+  #   continue
+  # fi  
+  # terragrunt_destroy "$dir" 
   terragrunt_destroy "$dir" &
+
+
 done
+echo "⏳ Waiting for tfstate backend s3 and dynamodb table to be destroyed..."
+wait
 echo "🎉 tfstate backend s3 and dynamodb table destroyed successfully  from s3!"
 
 echo "removing terragrunt cache directories..."

@@ -87,8 +87,8 @@ terraform {
 }
 
 inputs = {
-  upload_folder_with_terragrunt = "${get_parent_terragrunt_dir("root")}/lirw-three-tier"
-  # upload_folder_with_terragrunt = "${get_parent_terragrunt_dir("root")}/application-code/application-code"
+  # upload_folder_with_terragrunt = "${get_parent_terragrunt_dir("root")}/lirw-three-tier"
+  upload_folder_with_terragrunt = "${get_parent_terragrunt_dir("root")}/application-code/application-code"
   # upload_folder_with_terragrunt = "${dirname(get_terragrunt_dir())}/lirw-three-tier"
   # upload_folder_with_terragrunt = "${path_relative_from_include("root")()}/application-code/application-code"
   # upload_folder_with_terragrunt = "${get_original_terragrunt_dir()}/application-code/application-code"
