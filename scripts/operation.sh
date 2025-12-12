@@ -36,10 +36,10 @@ filename=$1
 # Determine log file name
 case "$operation" in
   startup)
-    file_name="startup-env-panda-apply-log"
+    file_name="startup-log"
     ;;
   cleanup)
-    file_name="cleanup-env-panda-apply-log"
+    file_name="cleanup-log"
     ;;
   *)
     echo "Error: Invalid operation '$operation'. Use 'startup' or 'cleanup'"
