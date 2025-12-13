@@ -7,7 +7,7 @@ This repository contains Infrastructure as Code (IaC) for automated AWS resource
 **⚠️ Important Notice:**
 
 - Initial deployment takes approximately **15 minutes**
-- Resource cleanup takes approximately **15 minutes**
+- Resource cleanup takes approximately **20 minutes**
 - All operations are logged in `logs/` directory in the project root folder (created automatically on startup)
 
 ---
@@ -128,7 +128,7 @@ Clean up all AWS resources:
 - Deletes DNS records
 - Preserves logs for audit purposes
 
-**Duration:** ~15 minutes
+**Duration:** ~20 minutes
 
 ---
 
@@ -238,5 +238,6 @@ For issues, questions, or contributions, please:
 
 - Initial Setup: 10 minutes
 - Deployment: 10 minutes
-- Cleanup: 15 minutes
-- **Total:** ~35 minutes for complete lifecycle
+- Cleanup: 20 minutes
+- **Total:** ~40 minutes for complete lifecycle
+
