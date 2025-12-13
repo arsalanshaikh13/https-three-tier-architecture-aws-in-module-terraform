@@ -2,19 +2,21 @@
 
 ## Overview
 
-This repository contains Infrastructure as Code (IaC) for automated AWS resource provisioning and configuration using Terraform, Terragrunt, Ansible, and Packer.
+This repository contains Infrastructure as Code (IaC) for automated AWS resource provisioning and configuration using Terraform and Terragrunt
 
 **⚠️ Important Notice:**
 
 - Initial deployment takes approximately **15 minutes**
 - Resource cleanup takes approximately **15 minutes**
-- All operations are logged in `logs/` and `ansible-logs/` directories (created automatically on startup)
+- All operations are logged in `logs/` directory in the project root folder (created automatically on startup)
 
 ---
 
 ## Prerequisites
 
 ### Required Software
+
+**Operating System**: any linux distro or git bash on windows, i have used ubuntu and git bash in this setup
 
 Ensure the following tools are installed on your system:
 
@@ -67,12 +69,11 @@ aws_secret_access_key = your_secret_key
 Edit the `terraform.tfvars` file with your specific configuration:
 
 ```hcl
-# terraform.tfvars
+# configuration/{env}/terraform.tfvars
 
 # Domain Configuration (must be hosted on AWS Route 53)
-certificate_domain_name   = "yourdomain.com"
-additional_domain_name    = "{env}.yourdomain.com"    # Environment-specific subdomain
-alb_api_domain_name       = "api.yourdomain.com"      # Internal load balancer endpoint
+hosted_zone_domain_name   = "yourdomain.com"          # domain saved in hosted zone in route 53
+domain_name_to_use    = "{env}.yourdomain.com"     # domain name to be used to test the app and create acm certificate for cloudfront
 
 # EC2 Configuration
 instance_type = "t4g.small"  # Default: runs on Amazon Linux 2023 arm64 (ec2-user)
@@ -83,9 +84,8 @@ region        = "us-east-1"
 
 **Domain Configuration Notes:**
 
-- `certificate_domain_name`: Primary domain for ACM/SSL certificate
-- `additional_domain_name`: Environment subdomain (replace `{env}` with dev, staging, prod, etc.), domain on which the app is hosted
-- `alb_api_domain_name`: API endpoint for internal Application Load Balancer
+- `hosted_zone_domain_name`: domain hosted in route53
+- `domain_name_to_use`: Environment subdomain (replace `{env}` with dev, staging, prod, etc.), domain on which the app is going to be hosted and tested eg. dev.yourdomain.com
 
 **⚠️ Domain Requirement:** Your domain must be managed by AWS Route 53 before deployment.
 
@@ -111,6 +111,8 @@ Deploy all AWS resources:
 - Creates log directories and begins logging
 
 **Duration:** ~15 minutes
+
+**Test the setup**: in the browser type only `"{env}.yourdomain.com"` eg. dev.yourdomain.com, for testing the app running in dev environment, similarly for prod environment use prod.yourdomain.com
 
 ### Destroying Infrastructure
 
@@ -183,11 +185,6 @@ ssh -i nat-bastion-key.pem ec2-user@<instance-public-ip>
 - **Solution:** Ensure key.pem has correct permissions: `chmod 400 terraform_{env}/nat_key/key/key.pem`
 - Verify security group allows SSH (port 22) from your IP address
 
-**Issue:** "Packer build failures"
-
-- **Solution:** Check logs in `logs/packer/backend/packer-logs/` or `logs/packer/frontend/packer-logs/`
-- Verify Ansible playbooks completed successfully in corresponding ansible-logs directories
-
 ---
 
 ## Default Configuration
@@ -195,7 +192,7 @@ ssh -i nat-bastion-key.pem ec2-user@<instance-public-ip>
 - **Operating System:** Amazon Linux 2023 arm64 (ec2-user)
 - **Default Region:** us-east-1
 - **Default Instance Type:** t4g.small
-- **Logging:** logs/ and ansible-logs/ folders and the respective log files inside will be created automatically when operation.sh script is running.
+- **Logging:** logs/ folder and the respective log files inside will be created automatically when operation.sh script is running.
 - **change the name of log file**: the log file name inside logs/ folder can be changed inside operation.sh script
 
 ```bash

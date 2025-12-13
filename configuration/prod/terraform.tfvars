@@ -97,9 +97,9 @@ frontend_ami_name = "three-tier-frontend-prod"
 # cloudfront_custom_header_value = "random-value-prod-123456"
 
 # domain records
-certificate_domain_name = "devsandbox.space"
+hosted_zone_domain_name = "devsandbox.space"
+domain_name_to_use  = "prod.devsandbox.space"
 # additional_domain_name  = "www.devsandbox.space"
-additional_domain_name  = "prod.devsandbox.space"
 # alb_api_domain_name     = "api.devsandbox.space"
 
 # sns topic email address

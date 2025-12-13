@@ -12,7 +12,7 @@ include "global_mocks" {
 terraform {
   # source = "../../../../modules/app"
   # source = "${path_relative_from_include("root")}/modules/hosting/cloudfront"
-  source = "tfr://gitlab.com/arsalanshaikh13/tf-modules-panda-user-data/aws//hosting/cloudfront?version=1.2.0-acm-record"
+  source = "tfr://gitlab.com/arsalanshaikh13/tf-modules-panda-user-data/aws//hosting/cloudfront?version=1.1.0-domain-change"
   # Notice the git:: prefix and the https protocol
   # source = "git::https://gitlab.com/arsalanshaikh13/tf-modules-panda-user-data.git//modules/hosting/cloudfront?ref=main"
   # source = "git::ssh://git@gitlab.com/arsalanshaikh13/tf-modules-panda-user-data.git//modules/hosting/cloudfront?ref=main"
