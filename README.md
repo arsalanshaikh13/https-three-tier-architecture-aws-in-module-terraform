@@ -187,7 +187,7 @@ ssh -i nat-bastion-key.pem ec2-user@<instance-public-ip>
 
 ---
 
-## Default Configuration
+## Default Configuration for ec2 instance
 
 - **Operating System:** Amazon Linux 2023 arm64 (ec2-user)
 - **Default Region:** us-east-1
