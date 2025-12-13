@@ -79,7 +79,7 @@ domain_name_to_use    = "{env}.yourdomain.com"     # domain name to be used to t
 instance_type = "t4g.small"  # Default: runs on Amazon Linux 2023 arm64 (ec2-user)
 region        = "us-east-1"
 
-# Add other configuration parameters as needed
+# Add other configuration parameters as needed.
 ```
 
 **Domain Configuration Notes:**
@@ -147,7 +147,27 @@ project-root/
             └── nat-bastion-key.pem            # SSH private key for nat instance and bastion host EC2 access
 ```
 
-**Note:** Log directories are created automatically when you run `./scripts/operation.sh startup`
+**Note:** logs/ and ansible-logs/ folders and the respective log files are created automatically when you run `./scripts/operation.sh startup`
+
+- **change the name of log file**: the log file name inside logs/ folder can be changed inside operation.sh script
+
+```bash
+# ./scripts/operation.sh
+# Determine log file name
+case "$operation" in
+  startup)
+    file_name="startup-log"
+    ;;
+  cleanup)
+    file_name="cleanup-log"
+    ;;
+  *)
+    echo "Error: Invalid operation '$operation'. Use 'startup' or 'cleanup'"
+    exit 1
+    ;;
+esac
+
+```
 
 ### SSH Access for Debugging
 
@@ -192,26 +212,6 @@ ssh -i nat-bastion-key.pem ec2-user@<instance-public-ip>
 - **Operating System:** Amazon Linux 2023 arm64 (ec2-user)
 - **Default Region:** us-east-1
 - **Default Instance Type:** t4g.small
-- **Logging:** logs/ folder and the respective log files inside will be created automatically when operation.sh script is running.
-- **change the name of log file**: the log file name inside logs/ folder can be changed inside operation.sh script
-
-```bash
-# ./scripts/operation.sh
-# Determine log file name
-case "$operation" in
-  startup)
-    file_name="startup-log"
-    ;;
-  cleanup)
-    file_name="cleanup-log"
-    ;;
-  *)
-    echo "Error: Invalid operation '$operation'. Use 'startup' or 'cleanup'"
-    exit 1
-    ;;
-esac
-
-```
 
 ---
 
