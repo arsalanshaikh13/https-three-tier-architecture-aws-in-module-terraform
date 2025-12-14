@@ -1,6 +1,34 @@
 #!/bin/bash
 set -eo pipefail
 
+
+cd modules/key
+#  Generate SSH keys
+# Function to check if local key files exist
+check_local_keys() {
+    local key_name=$1
+    [ -f "$key_name" ] && [ -f "$key_name.pub" ]
+    return $?
+}
+# Generate frontend key pair if it doesn't exist
+if ! check_local_keys "client_key"; then
+  echo "Creating client key pair..."
+  ssh-keygen -t rsa -b 4096 -f client_key -N ""
+else
+  echo "Client key pair already exists locally"
+fi
+
+if ! check_local_keys "server_key"; then
+  echo "Creating server key pair..."
+  ssh-keygen -t rsa -b 4096 -f server_key -N ""
+else
+  echo "Server key pair already exists locally"
+fi
+
+echo "SSH key pairs setup completed"
+cd ../..
+
+
 # setup terraform state bucket
 cd backend-tfstate-bootstrap
 DIRECTORY_BACKEND=".terraform"
