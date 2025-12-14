@@ -1,3 +1,7 @@
+# Three-Tier Application AWS Architecture
+
+![Three-Tier AWS Architecture Diagram](architecture/architecture-dark.png)
+
 # Installation and Running Guide
 
 ## Overview
@@ -73,7 +77,7 @@ Edit the `terraform.tfvars` file with your specific configuration:
 
 # Domain Configuration (must be hosted on AWS Route 53)
 certificate_domain_name   = "yourdomain.com"          # domain saved in hosted zone in route 53 and based on which acm certificate is created
-additional_domain_name    = "www.yourdomain.com"     # additional domain name to be used to test the app 
+additional_domain_name    = "www.yourdomain.com"     # additional domain name to be used to test the app
 
 # EC2 Configuration
 instance_type = "t4g.small"  # Default: runs on Amazon Linux 2023 arm64 (ec2-user)
@@ -112,7 +116,7 @@ Deploy all AWS resources:
 
 **Duration:** ~10 minutes
 
-**Test the setup**: in the browser type only `"www.yourdomain.com"`  for testing the app
+**Test the setup**: in the browser type only `"www.yourdomain.com"` for testing the app
 
 ### Destroying Infrastructure
 
@@ -222,7 +226,7 @@ ssh -i nat-bastion-key.pem ec2-user@<instance-public-ip>
 3. **Log retention:** Keep logs for troubleshooting and compliance
 4. **Cleanup verification:** Verify all resources are destroyed via AWS Console after cleanup
 5. **Version control:** : version control different configurations
-6. **Key management:** Store SSH keys securely and rotate regularly 
+6. **Key management:** Store SSH keys securely and rotate regularly
 
 ---
 
@@ -240,4 +244,3 @@ For issues, questions, or contributions, please:
 - Deployment: 10 minutes
 - Cleanup: 20 minutes
 - **Total:** ~40 minutes for complete lifecycle
-
