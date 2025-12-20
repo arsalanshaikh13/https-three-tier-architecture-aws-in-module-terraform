@@ -1,12 +1,14 @@
-# Installation and Running Guide
-
-## Three-Tier Application AWS Architecture
+# Three-Tier Application AWS Architecture
 
 ![Three-Tier AWS Architecture Diagram](architecture/architecture-dark.png)
 
+> more details regarding the case study of the project is provided in [case-study.md](case-study.md) file
+
+# Installation and Running Guide
+
 ## Overview
 
-This repository contains Infrastructure as Code (IaC) for automated AWS resource provisioning and configuration using Terraform and Terragrunt
+This repository contains Infrastructure as Code (IaC) for automated AWS resource provisioning and configuration using Terraform and Terragrunt.
 
 **⚠️ Important Notice:**
 
